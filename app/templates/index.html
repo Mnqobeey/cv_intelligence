@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CestaSoft Profile Builder</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <form id="uploadForm" class="premium-card stack-card">
+        <div class="input-mode-tabs">
+          <button type="button" class="input-mode-tab active" data-input-mode="file">Upload File</button>
+          <button type="button" class="input-mode-tab" data-input-mode="paste">Paste Text</button>
+        </div>
+        <div id="fileInputArea">
+          <label for="cvFile" class="label">Upload CV</label>
+          <div class="upload-zone" id="uploadZone" data-state="empty">
+            <input type="file" id="cvFile" name="file" accept=".pdf,.docx,.txt,.md" />
+            <div class="upload-zone-text">
+              <span class="upload-icon" id="uploadStateIcon">+</span>
+              <span id="uploadStateTitle">Drop your CV here or click to browse</span>
+              <span class="upload-hint" id="uploadStateHint">PDF, DOCX, TXT supported</span>
+              <span class="upload-state-badge hidden" id="uploadStateBadge"></span>
+              <span class="upload-file-name hidden" id="uploadStateFileName"></span>
+            </div>
+          </div>
+        </div>
+        <div id="pasteInputArea" style="display:none;">
+          <label for="cvPasteText" class="label">Paste CV Text</label>
+          <textarea id="cvPasteText" class="paste-textarea" rows="8" placeholder="Paste your structured CV text here...&#10;&#10;The system will analyse it just like an uploaded file."></textarea>
+        </div>
+        <button type="submit" class="primary-btn" id="uploadBtn">
+          <span class="btn-text">Analyse CV</span>
+          <span class="btn-loader hidden"></span>
+        </button>
+      </form>
+
+      <div class="premium-card stack-card compact" id="statusCard">
+        <div class="label">Status</div>
+        <div id="statusText" class="status-text">Ready to process your CV</div>
+        <div id="progressMeta" class="progress-meta hidden">
+          <div id="progressBar" class="progress-bar hidden">
+            <div class="progress-fill"></div>
+          </div>
+          <div id="progressText" class="progress-text hidden">Analysing CV... 0%</div>
+        </div>
+      </div>
+
+      <div class="premium-card stack-card compact" id="promptCard">
+        <div class="detail-row">
+          <span class="label">ChatGPT Structuring Prompt</span>
+          <div class="chip-row">
+            <button class="small-btn" id="viewPromptBtn" type="button">View Prompt</button>
+            <button class="small-btn" id="copyPromptBtn" type="button">Copy Prompt</button>
+          </div>
+        </div>
+        <div id="promptPreview" class="prompt-preview hidden"></div>
+      </div>
+
+      <div class="premium-card stack-card" id="recommendationsCard" style="display:none;">
+        <div class="label">Recommendations</div>
+        <div id="recommendationsList" class="recommendations-list"></div>
+      </div>
+
+      <div class="premium-card stack-card compact" id="mappingModeCard" style="display:none;">
+        <div class="detail-row"><span class="label">Transfer Mode</span><span id="mappingModeLabel" class="detail-value">Replace</span></div>
+        <div class="chip-row">
+          <button class="chip active" data-mode="replace" type="button">Replace</button>
+          <button class="chip" data-mode="append" type="button">Append</button>
+          <button class="chip" data-mode="new_item" type="button">Add New Item</button>
+        </div>
+      </div>
+
+      <div class="premium-card stack-card" id="navCard">
+        <div class="nav-list">
+          <button class="nav-link active" data-tab="workspace" type="button">
+            <span class="nav-icon">&#9638;</span> Workspace
+          </button>
+          <button class="nav-link" data-tab="builder" type="button">
+            <span class="nav-icon">&#9998;</span> Profile Builder
+          </button>
+          <button class="nav-link" data-tab="preview" type="button">
+            <span class="nav-icon">&#9733;</span> Recruiter Preview
+          </button>
+
+        </div>
+      </div>
+
+      <div class="premium-card stack-card" id="reviewCard" style="display:none;">
+        <div class="label">Profile Review</div>
+        <div id="reviewSummary" class="status-text">Your review checklist will appear here.</div>
+        <div id="reviewBoard" class="review-board"></div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-area">
+      <!-- Hero section -->
+      <section class="hero premium-card" id="heroSection">
+        <div class="hero-content">
+          <div class="eyebrow">CestaSoft Professional Profile</div>
+          <h1>Smart CV Analysis, Instantly.</h1>
+          <p class="hero-description">Upload a CV, review the detected sections, and click any heading to send its content straight into the right profile section.</p>
+        </div>
+        <div class="hero-actions">
+          <span id="fileNamePill" class="pill">No file loaded</span>
+          <button id="themeToggle" class="icon-btn" type="button" title="Toggle dark mode">
+            <span id="themeIcon">&#9789;</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Workspace: Source Viewer + Builder side by side -->
+      <section class="tab-panel active" data-tab-panel="workspace">
+        <div class="workspace-dual-pane">
+          <!-- Source Viewer -->
+          <div class="pane-container">
+            <div class="premium-card pane-card">
+              <div class="panel-header">
+                <div>
+                  <h2>Source Document</h2>
+                  <p class="panel-subtitle">Review the original CV here. The system detects likely blocks automatically, and you only step in when a section needs correction.</p>
+                </div>
+                <span class="pill accent" id="sectionCountPill">0 sections</span>
+              </div>
+              <div id="documentViewer" class="document-viewer empty-state">
+                <div class="empty-state-content">
+                  <div class="empty-icon">&#128196;</div>
+                  <h3>Upload a CV to get started</h3>
+                  <p>Your original CV will appear here. Detected source blocks and suggested section matches will appear beneath it for guided review.</p>
+                </div>
+              </div>
+              <div class="detected-blocks-wrap" id="detectedBlocksWrap">
+                <div class="detected-blocks-header">
+                  <strong>Detected source blocks</strong>
+                  <span class="helper-text">Accept the suggested destination or reassign only what needs attention.</span>
+                </div>
+                <div id="detectedBlocks" class="detected-blocks empty-state">Upload a CV to review detected blocks.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Builder Quick View -->
+          <div class="pane-container">
+            <div class="premium-card pane-card">
+              <div class="panel-header">
+                <div>
+                  <h2>Profile Builder</h2>
+                  <p class="panel-subtitle">Your draft profile is built automatically. Fix only the sections that are flagged or use source for a targeted correction.</p>
+                </div>
+                <div class="panel-actions">
+                  <button class="small-btn" id="expandBuilderBtn" type="button">Full View</button>
+                </div>
+              </div>
+              <div id="builderQuickView" class="builder-quick-view empty-state">
+                <div class="empty-state-content">
+                  <div class="empty-icon">&#9998;</div>
+                  <h3>Your draft profile will populate here</h3>
+                  <p>Once a CV is uploaded, the system fills the builder automatically and shows you exactly which sections still need a quick review.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Full Builder Tab -->
+      <section class="tab-panel" data-tab-panel="builder">
+        <div class="premium-card full-builder-card">
+          <div class="panel-header">
+            <div>
+              <h2>Profile Builder</h2>
+              <p class="panel-subtitle">Review section by section. Use the source only when you need to correct or add something specific.</p>
+            </div>
+            <div class="panel-actions">
+              <button class="small-btn" id="backToWorkspaceBtn" type="button">Back to Workspace</button>
+            </div>
+          </div>
+          <div id="templateEditor" class="template-grid"></div>
+        </div>
+      </section>
+
+      <!-- Preview Tab -->
+      <section class="tab-panel" data-tab-panel="preview">
+        <div class="premium-card preview-card">
+          <div class="panel-header">
+            <div>
+              <h2>Recruiter-Ready Preview</h2>
+              <p class="panel-subtitle">This preview is locked to the final CestaSoft profile structure only.</p>
+            </div>
+            <div class="panel-actions preview-action-group">
+              <button id="reviewCompleteBtn" class="small-btn" type="button" style="display:none;">Mark Review Complete</button>
+              <button id="downloadPreviewBtn" class="download-btn small" type="button" style="display:none;">Download DOCX Profile</button>
+            </div>
+          </div>
+          <div id="previewPane" class="preview-pane empty-state">
+            <div class="empty-state-content">
+              <div class="empty-icon">&#9733;</div>
+              <h3>Your polished profile preview</h3>
+              <p>Upload and process a CV to see the recruiter-ready output here.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Selection / Mapping Dialog -->
+  <div id="selectionMenu" class="selection-menu hidden">
+    <div class="selection-menu-inner">
+      <div class="selection-menu-header">
+        <strong>Map source section</strong>
+        <button class="selection-close" id="selectionClose" type="button">&times;</button>
+      </div>
+      <div class="selection-preview" id="selectionPreviewText"></div>
+      <div class="selection-search">
+        <input type="text" id="fieldSearchInput" placeholder="Search fields..." class="field-search-input" />
+      </div>
+      <div class="selection-categories" id="selectionCategories"></div>
+    </div>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    // noinspection JSAnnotator
+    window.FIELD_DEFINITIONS = {{ field_definitions | tojson }};
+  </script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

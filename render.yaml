@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: cv-intelligence
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATA_DIR
+        value: /var/data/data
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: EXPORT_DIR
+        value: /var/data/exports
+      - key: DATABASE_PATH
+        value: /var/data/data/documents.sqlite3
+    disk:
+      name: cv-intelligence-disk
+      mountPath: /var/data
+      sizeGB: 1

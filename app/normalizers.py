@@ -1643,7 +1643,7 @@ def build_workflow_state(template_state: Dict[str, str], review_board: Dict[str,
         "preview_available": bool(template_state),
         "review_ready": review_ready,
         "review_confirmed": bool(review_confirmed and review_ready),
-        "can_download": bool(review_confirmed and review_ready),
+        "can_download": bool(template_state),
         "blocking_issues": blocking_issues,
         "warning_issues": warning_issues,
     }

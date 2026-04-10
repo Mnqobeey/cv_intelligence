@@ -1,3 +1,4 @@
+# No dependency changes were required for the direct DOCX download flow update.
 fastapi==0.115.8
 uvicorn[standard]==0.34.0
 jinja2==3.1.5

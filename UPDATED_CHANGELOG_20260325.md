@@ -8,6 +8,7 @@
 - Certification parsing now ignores experience-role headers and responsibility sentences.
 - Career-history parsing strips leaked `Experience` / `Career History` prefixes before canonical mapping.
 - Invalid portfolio/linkedin values inferred from stray text are cleared so they do not block review completion.
+- DOCX download no longer requires a completed preview-review step before the file can be generated.
 
 ## Template
 - Replaced the active output template with the attached `Template Cestasoft Profile.docx`.
@@ -15,6 +16,6 @@
 
 ## Verified
 - Pasted-text flow reaches `review-complete` successfully.
-- DOCX download works after review completion.
+- DOCX download works directly from the current preview state.
 - CestaSoft template renders successfully from the updated pipeline.
 - Route tests for upload and pasted-text flows pass.

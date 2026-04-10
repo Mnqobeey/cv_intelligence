@@ -967,19 +967,11 @@ function renderPreview() {
   previewPane.className = 'preview-pane';
   previewPane.innerHTML = state.previewHtml || '';
   enhancePreviewPresentation();
-  const canConfirm = !!state.workflowState?.review_ready && !state.workflowState?.review_confirmed;
-  reviewCompleteBtn.style.display = canConfirm ? '' : 'none';
-  // Apply animated reveal class for the review-page CTA button
-  if (canConfirm) {
-    reviewCompleteBtn.classList.remove('cta-reveal');
-    void reviewCompleteBtn.offsetWidth; // force reflow to restart animation
-    reviewCompleteBtn.classList.add('cta-reveal');
-  }
   if (state.workflowState?.can_download) {
-    setStatus('Profile reviewed successfully. Download is now unlocked.');
+    setStatus('Profile preview generated. Download is ready.');
   } else if (previewPane.querySelector('.report-alert')) {
     const warningCount = (state.workflowState?.warning_issues || []).length;
-    setStatus(warningCount ? `Profile preview generated. Blocking issues must be cleared before download. ${warningCount} warning${warningCount !== 1 ? 's' : ''} remain visible.` : 'Profile preview generated. Clear the review issues to unlock download.');
+    setStatus(warningCount ? `Profile preview generated. ${warningCount} warning${warningCount !== 1 ? 's' : ''} remain visible.` : 'Profile preview generated.');
   }
 }
 
@@ -1099,8 +1091,9 @@ function renderAnnotations() {
 // ---------------------------------------------------------------------------
 function updateDownloadButtons() {
   const canDownload = !!state.workflowState?.can_download;
-  const canConfirm = !!state.workflowState?.review_ready && !state.workflowState?.review_confirmed;
-  reviewCompleteBtn.style.display = canConfirm ? '' : 'none';
+  if (reviewCompleteBtn) {
+    reviewCompleteBtn.style.display = 'none';
+  }
   downloadPreviewBtn.style.display = canDownload ? '' : 'none';
   if (canDownload) {
     downloadPreviewBtn.classList.remove('cta-reveal');
@@ -1122,7 +1115,8 @@ async function handleDownload() {
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setStatus(data.detail || 'Download failed. Complete review first.');
+      const detail = Array.isArray(data.detail) ? data.detail.join(' ') : data.detail;
+      setStatus(detail || 'Download failed.');
       return;
     }
     const blob = await res.blob();
@@ -1171,7 +1165,9 @@ async function handleReviewComplete() {
   }
 }
 
-reviewCompleteBtn.addEventListener('click', handleReviewComplete);
+if (reviewCompleteBtn) {
+  reviewCompleteBtn.addEventListener('click', handleReviewComplete);
+}
 
 downloadPreviewBtn.addEventListener('click', handleDownload);
 

@@ -1,12 +1,12 @@
 # CestaCV Intelligence Studio
 
-A FastAPI application for converting uploaded CVs into structured professional profiles and exporting the final result as a DOCX document.
+A FastAPI application for converting uploaded CVs into structured professional profiles and downloading the final result as a DOCX document.
 
 ## Overview
 
 CestaCV Intelligence Studio provides a practical workspace for reviewing CV content, organizing it into a consistent professional profile format, and producing a Word document aligned to the CestaSoft presentation standard.
 
-The application is designed to support a guided review process rather than treat the browser preview as the finished deliverable. The main output is the exported `.docx` profile.
+The application is designed to support a guided review process while still allowing the browser preview state to be downloaded immediately as the final `.docx` profile when needed.
 
 ## Recent updates
 
@@ -15,6 +15,7 @@ The application is designed to support a guided review process rather than treat
 - Added safer upload validation and JSON request handling.
 - Added cleanup routines for temporary upload and export artifacts.
 - Improved the DOCX export workflow to follow the CestaSoft profile structure more consistently.
+- Removed the forced preview-review step before DOCX download so users can download directly from the current profile state.
 - Added a structured export contract for identity, summary, skills, qualifications, certifications, career summary, and career history.
 - Removed bundled sample CVs, cached exports, validation output, and other non-essential repository files.
 - Improved docstrings and comments to support maintainability.
@@ -32,7 +33,16 @@ The generated DOCX is organized around:
 7. Career summary
 8. Career history
 
-The in-app HTML preview is intended as a working surface for review. The primary final output is the exported `.docx` profile.
+The in-app HTML preview is intended as a working surface for review. The primary final output is the downloadable `.docx` profile.
+
+## Download flow
+
+1. Upload or paste CV content.
+2. Let the profile builder populate or make any edits you want.
+3. Open the recruiter-ready preview.
+4. Use `Download DOCX Profile` immediately when the preview is available.
+
+Manual review is optional for workflow quality, but it is not required to trigger the DOCX download.
 
 ## Project structure
 
@@ -104,7 +114,7 @@ Notes:
 
 ## Verification
 
-Basic automated tests are included for the DOCX export flow and the upload-to-download flow.
+Basic automated tests are included for the DOCX export flow and the upload-to-download flow, including direct download from the current preview state.
 
 ```bash
 pytest -q

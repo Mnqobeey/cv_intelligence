@@ -57,3 +57,4 @@ Kept runtime directories with `.gitkeep` placeholders where useful.
 ## Notes
 - The project still uses the canonical runtime asset name `Template Cestasoft Profile.docx`; only the **content/layout source** changed to the Milford-based template.
 - No Lindelwe template asset is included in the final project.
+- Current product behavior allows DOCX download directly from the active preview state without requiring a separate review-complete action first.

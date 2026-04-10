@@ -1,10 +1,12 @@
 from io import BytesIO
 import json
 from pathlib import Path
+import sqlite3
 
 from docx import Document
 from fastapi.testclient import TestClient
 
+from app.constants import DATABASE_PATH
 from app.main import create_app
 
 
@@ -76,6 +78,72 @@ def test_review_completion_unlocks_download(tmp_path: Path):
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
     assert len(download.content) > 1000
+
+
+def test_download_rebuilds_validated_export_when_reviewed_document_loses_cached_payload(tmp_path: Path):
+    app = create_app()
+    client = TestClient(app)
+    data = upload_sample(client)
+
+    review = client.post(
+        f"/api/document/{data['document_id']}/review-complete",
+        json={"template_state": data["template_state"]},
+    )
+    assert review.status_code == 200, review.text
+
+    with sqlite3.connect(DATABASE_PATH) as connection:
+        row = connection.execute(
+            "SELECT payload_json FROM documents WHERE document_id = ?",
+            (data["document_id"],),
+        ).fetchone()
+        payload = json.loads(row[0])
+        payload.pop("validated_export_json", None)
+        connection.execute(
+            "UPDATE documents SET payload_json = ? WHERE document_id = ?",
+            (json.dumps(payload, ensure_ascii=False), data["document_id"]),
+        )
+        connection.commit()
+
+    refreshed = client.get(f"/api/document/{data['document_id']}")
+    assert refreshed.status_code == 200, refreshed.text
+    assert refreshed.json()["workflow_state"]["can_download"] is True
+
+    download = client.post(
+        f"/api/document/{data['document_id']}/download",
+        json={"template_state": data["template_state"]},
+    )
+    assert download.status_code == 200, download.text
+    assert len(download.content) > 1000
+
+
+def test_export_revalidates_when_template_state_changes_after_review_complete(tmp_path: Path):
+    app = create_app()
+    client = TestClient(app)
+    data = upload_sample(client)
+
+    review = client.post(
+        f"/api/document/{data['document_id']}/review-complete",
+        json={"template_state": data["template_state"]},
+    )
+    assert review.status_code == 200, review.text
+
+    mutated = dict(data["template_state"])
+    mutated["summary"] = (mutated.get("summary") or "") + " UNIQUE_EXPORT_TOKEN_42"
+    mutated["headline"] = "Updated Headline UNIQUE_EXPORT_HEADLINE_42"
+
+    export = client.post(
+        f"/api/document/{data['document_id']}/export",
+        json={"template_state": mutated},
+    )
+    assert export.status_code == 200, export.text
+    files = export.json()
+
+    docx = client.get(files["docx_file"])
+    assert docx.status_code == 200, docx.text
+    doc = Document(BytesIO(docx.content))
+    full_text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
+    assert "UNIQUE_EXPORT_TOKEN_42" in full_text
+    assert "UNIQUE_EXPORT_HEADLINE_42" in full_text
 
 
 def test_preview_is_locked_to_george_sections(tmp_path: Path):

@@ -417,11 +417,19 @@ def register_routes(templates: Jinja2Templates, store: SQLiteDocumentStore) -> A
         template_state = normalize_template_state(payload.get("template_state", document["template_state"]))
         document["template_state"] = template_state
         refresh_document_state(document)
-        if not document.get("validated_export_json"):
+        if not document.get("validated_export_json") or not document.get("review_confirmed"):
             raise HTTPException(status_code=400, detail="Complete preview review successfully before export.")
+        if not document.get("workflow_state", {}).get("review_ready"):
+            raise HTTPException(status_code=400, detail={"message": "Profile is not ready for export.", "issues": document.get("workflow_state", {}).get("blocking_issues") or []})
         export_base = EXPORT_DIR / f"cv_export_{document_id}"
         json_path = export_base.with_suffix(".json")
         docx_path = export_base.with_suffix(".docx")
+        try:
+            validated = validated_schema_from_document(document, template_state)
+        except ValidationError as exc:
+            raise HTTPException(status_code=400, detail=schema_error_detail(exc)) from exc
+        document["validated_export_json"] = validated.model_dump()
+        store.save_document(document_id, document)
         build_profile_docx_from_schema(docx_path, document["validated_export_json"])
         json_payload = {
             "filename": document["filename"],
@@ -441,9 +449,15 @@ def register_routes(templates: Jinja2Templates, store: SQLiteDocumentStore) -> A
     async def download_cv(document_id: str, request: Request):
         store.cleanup_expired_artifacts()
         document = get_document_or_404(document_id)
-        await safe_request_json(request)
-        if not document.get("validated_export_json") or not document.get("workflow_state", {}).get("can_download"):
-            raise HTTPException(status_code=400, detail="Preview review must be completed successfully before download.")
+        payload = await safe_request_json(request)
+        template_state = normalize_template_state(payload.get("template_state", document["template_state"]))
+        refresh_document_state(document, template_state)
+        try:
+            validated = validated_schema_from_document(document, template_state)
+        except ValidationError as exc:
+            raise HTTPException(status_code=400, detail=schema_error_detail(exc)) from exc
+        document["validated_export_json"] = validated.model_dump()
+        store.save_document(document_id, document)
         export_base = EXPORT_DIR / f"cv_download_{document_id}"
         docx_path = export_base.with_suffix(".docx")
         build_profile_docx_from_schema(docx_path, document["validated_export_json"])

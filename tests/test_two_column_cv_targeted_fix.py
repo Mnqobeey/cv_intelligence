@@ -1,4 +1,4 @@
-"""Targeted regression tests for Prince_MPT_Mafolo_CV-style parsing.
+"""Targeted regression tests for Taylor_MPT_Rivera_CV-style parsing.
 
 Validates fixes for:
 - Abbreviation tokens in filename-based name inference
@@ -26,19 +26,19 @@ from app.parsers import (
 
 
 # ---------------------------------------------------------------------------
-# Simulated raw text from a two-column CV similar to Prince_MPT_Mafolo_CV.pdf
+# Simulated raw text from a two-column CV similar to Taylor_MPT_Rivera_CV.pdf
 # Left sidebar: name, headline, personal details, skills
 # Right column: profile, education, employment, certificates, achievements,
 #               references, languages
 # ---------------------------------------------------------------------------
 _SIMULATED_RAW_TEXT = """\
-Mochabo Prince Mafolo
+Parker Taylor Rivera
 Senior Test Automation Engineer
 
 Personal Details
-Mochabo Prince Mafolo
-mochabo.mafolo@gmail.com
-+27781898365
+Parker Taylor Rivera
+parkerrivera@example.com
++278200000004
 47/7905, Morula View,
 Mabopane
 0190 Pretoria
@@ -128,10 +128,10 @@ A payment platform used in some African countries.
 References
 Lungelo Shembe - Line Manager
 iOCO, Midrand
-0824771868
+0600000005
 Deshnee Boodhram - Line Manager
 Hyphen, Johannesburg
-0659741325
+0600000006
 
 Languages
 English
@@ -139,7 +139,7 @@ Zulu
 Sepedi
 """
 
-_SOURCE_PATH = Path("Prince_MPT_Mafolo_CV.pdf")
+_SOURCE_PATH = Path("Taylor_MPT_Rivera_CV.pdf")
 
 
 def _build_state():
@@ -155,12 +155,12 @@ def _build_state():
 # ---------------------------------------------------------------------------
 class TestFilenameAbbreviationHandling:
     def test_mpt_abbreviation_stripped_from_filename(self):
-        result = infer_name_from_filename("Prince_MPT_Mafolo_CV.pdf")
+        result = infer_name_from_filename("Taylor_MPT_Rivera_CV.pdf")
         assert result is not None
-        # "MPT" should be skipped as an abbreviation → "Prince Mafolo"
+        # "MPT" should be skipped as an abbreviation → "Taylor Rivera"
         assert "Mpt" not in result
-        assert "Prince" in result
-        assert "Mafolo" in result
+        assert "Taylor" in result
+        assert "Rivera" in result
 
     def test_short_abbreviation_skipped(self):
         result = infer_name_from_filename("John_AB_Doe_CV.pdf")
@@ -184,7 +184,7 @@ class TestFilenameAbbreviationHandling:
 class TestDocumentIdentityPriority:
     def test_full_name_from_document_not_filename(self):
         _, state = _build_state()
-        assert state["full_name"] == "Mochabo Prince Mafolo"
+        assert state["full_name"] == "Parker Taylor Rivera"
 
     def test_headline_from_document_header(self):
         _, state = _build_state()
@@ -192,12 +192,12 @@ class TestDocumentIdentityPriority:
 
     def test_email_extracted(self):
         _, state = _build_state()
-        assert state["email"] == "mochabo.mafolo@gmail.com"
+        assert state["email"] == "parkerrivera@example.com"
 
     def test_phone_extracted(self):
         _, state = _build_state()
         assert state["phone"]
-        assert "27781898365" in state["phone"].replace(" ", "")
+        assert "278200000004" in state["phone"].replace(" ", "")
 
 
 # ---------------------------------------------------------------------------
@@ -300,7 +300,7 @@ class TestCareerHistoryBoundaries:
         history = state.get("career_history", "").lower()
         assert "lungelo shembe" not in history
         assert "deshnee boodhram" not in history
-        assert "0824771868" not in history
+        assert "0600000005" not in history
 
     def test_career_history_no_achievement_contamination(self):
         _, state = _build_state()

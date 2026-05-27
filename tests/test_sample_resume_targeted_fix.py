@@ -8,7 +8,7 @@ from app.utils_text import extract_text
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 LINDELWE_PDF = BASE_DIR / "uploads" / "fcd22d91-3baf-42a5-b10f-b06199029a11.pdf"
-LINDELWE_SOURCE_NAME = Path("Lindelwe Myeza Resume 2025.pdf")
+LINDELWE_SOURCE_NAME = Path("Morgan Lee Resume 2025.pdf")
 
 
 def test_lindelwe_pdf_skills_certifications_and_experience_render_cleanly():
@@ -32,7 +32,7 @@ def test_lindelwe_pdf_skills_certifications_and_experience_render_cleanly():
         ("THE BONGS INTERNET CAFÉ", "ASSISTANT IT TECHNICIAN", "May 2018", "Sep 2018"),
     ]
 
-    assert state["full_name"] == "Lindelwe Myeza"
+    assert state["full_name"] == "Morgan Lee"
     assert state["headline"] == "COBOL SOFTWARE DEVELOPER"
     assert state["summary"].startswith("Currently my short-term objectives are to gain new skills")
 

@@ -5,10 +5,10 @@ from app.parsers import parse_education_section, parse_sections
 
 
 THANDOKUHLE_RAW = """
-Thandokuhle Mnqobi Mntambo
-QA Intern mnqobimntambo@gmail.com
+Avery Morgan Patel
+QA Intern averyqa@example.com
 
-078 568 3003
+060 000 0009
 
 Bryanston, South Africa
 
@@ -49,13 +49,13 @@ def test_thandokuhle_identity_prefers_header_name_and_inline_role(tmp_path: Path
     profile = profile_from_sections(
         THANDOKUHLE_RAW,
         parse_sections(THANDOKUHLE_RAW),
-        tmp_path / "Thandokuhle_Mnqobi_Mntambo_FlowCV_Resume_2026-03-06 (1).pdf",
+        tmp_path / "Avery_Morgan_Patel_FlowCV_Resume_2026-03-06 (1).pdf",
     )
     state = profile_to_template_state(profile)
 
-    assert profile["identity"]["full_name"] == "Thandokuhle Mnqobi Mntambo"
+    assert profile["identity"]["full_name"] == "Avery Morgan Patel"
     assert profile["identity"]["headline"] == "QA Intern"
-    assert state["full_name"] == "Thandokuhle Mnqobi Mntambo"
+    assert state["full_name"] == "Avery Morgan Patel"
     assert state["headline"] == "QA Intern"
     assert state["full_name"] != "Productivity Tools"
     assert state["headline"] != "•Microsoft Excel (data analysis & visualization)"
@@ -74,7 +74,7 @@ def test_thandokuhle_multiline_education_rows_are_reconstructed_cleanly(tmp_path
     profile = profile_from_sections(
         THANDOKUHLE_RAW,
         parse_sections(THANDOKUHLE_RAW),
-        tmp_path / "Thandokuhle_Mnqobi_Mntambo_CV.pdf",
+        tmp_path / "Avery_Morgan_Patel_CV.pdf",
     )
     state = profile_to_template_state(profile)
 

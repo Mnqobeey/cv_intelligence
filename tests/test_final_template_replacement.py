@@ -8,7 +8,7 @@ from app.docx_exporter import build_profile_docx
 
 def _state():
     return {
-        "full_name": "Thandokuhle Mnqobi Mntambo",
+        "full_name": "Avery Morgan Patel",
         "headline": "QA Intern",
         "availability": "Immediate",
         "region": "Johannesburg",
@@ -32,7 +32,7 @@ def test_export_uses_replaced_final_template_layout(tmp_path: Path):
     build_profile_docx(out, _state(), profile=None)
     doc = Document(str(out))
     text = "\n".join(p.text for p in doc.paragraphs) + "\n" + "\n".join(cell.text for t in doc.tables for r in t.rows for cell in r.cells)
-    assert "Thandokuhle Mnqobi Mntambo" in text
+    assert "Avery Morgan Patel" in text
     assert "QA Intern" in text
     assert "Candidate Summary" in text
     assert "Career Summary" in text
@@ -69,7 +69,7 @@ def test_runtime_template_is_neutral_and_marker_driven(tmp_path: Path):
     assert "{{CLIENT_ENGAGEMENTS_BLOCK}}" in text
     assert "{{PROJECT_NAME}}" in text
     assert "{{PROJECT_DETAILS}}" in text
-    assert "George Thabiso Mpopo" not in text
+    assert "Jordan Lee Carter" not in text
     assert "Gijima Technologies" not in text
     assert "C# / NET" not in text
     assert "Mendix Apprentice Certificate" not in text

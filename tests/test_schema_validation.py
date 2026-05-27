@@ -9,7 +9,7 @@ from app.schema import validate_export_payload
 
 def sample_state():
     return {
-        "full_name": "George Thabiso Mpopo",
+        "full_name": "Jordan Lee Carter",
         "headline": "Senior / Lead Software Engineer",
         "availability": "Immediate / Negotiable",
         "region": "South Africa",
@@ -27,7 +27,7 @@ def sample_state():
 def test_export_payload_schema_validation_passes():
     payload = build_final_profile_payload(sample_state(), profile=None)
     validated = validate_export_payload(payload)
-    assert validated.identity.full_name == "George Thabiso Mpopo"
+    assert validated.identity.full_name == "Jordan Lee Carter"
     assert "Gijima Technologies" in validated.career_history[0].company
 
 

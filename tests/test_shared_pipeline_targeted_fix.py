@@ -7,7 +7,7 @@ from app.utils_text import extract_text
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 SANDISIWE_DOCX = BASE_DIR / "uploads" / "9213916c-303d-4a2e-94dd-d26efa1bc9c5.docx"
-SANDISIWE_SOURCE_NAME = Path("Sandisiwe_Vutula_JB.docx")
+SANDISIWE_SOURCE_NAME = Path("Jamie_Carter_CV.docx")
 
 
 def test_sandisiwe_docx_shared_pipeline_keeps_identity_sections_and_experience_clean():
@@ -17,9 +17,9 @@ def test_sandisiwe_docx_shared_pipeline_keeps_identity_sections_and_experience_c
     state = profile_to_template_state(profile)
     issues = validate_profile_readiness(state)
 
-    assert profile["identity"]["full_name"] == "SANDISIWE VUTULA"
+    assert profile["identity"]["full_name"] == "JAMIE CARTER"
     assert profile["identity"]["headline"] == "Senior Software Engineer"
-    assert state["full_name"] == "SANDISIWE VUTULA"
+    assert state["full_name"] == "JAMIE CARTER"
     assert state["headline"] == "Senior Software Engineer"
     assert state["availability"] == "Notice period not applicable / immediate"
     assert state["region"] == "Johannesburg"
@@ -36,7 +36,7 @@ def test_sandisiwe_docx_shared_pipeline_keeps_identity_sections_and_experience_c
     assert ".NET Frameworks" in skill_lines
     assert "Azure DevOps" in skill_lines
     assert "React.js" in skill_lines
-    assert "SANDISIWE VUTULA" not in skill_lines
+    assert "JAMIE CARTER" not in skill_lines
     assert "EDUCATION / QUALIFICATIONS" not in state["skills"]
     assert "Organisation:" not in state["skills"]
 

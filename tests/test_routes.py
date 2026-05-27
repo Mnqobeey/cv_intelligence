@@ -12,7 +12,7 @@ from app.main import create_app
 
 def make_upload_docx() -> bytes:
     doc = Document()
-    doc.add_paragraph("George Thabiso Mpopo")
+    doc.add_paragraph("Jordan Lee Carter")
     doc.add_paragraph("Senior / Lead Software Engineer")
     doc.add_paragraph("Email: george@example.com")
     doc.add_paragraph("Region: South Africa")

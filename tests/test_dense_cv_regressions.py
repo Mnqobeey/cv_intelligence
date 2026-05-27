@@ -17,7 +17,7 @@ def test_compressed_consulting_header_and_single_parent_role(tmp_path: Path):
     Coordinated migration planning and engineering delivery.
     """
     sections = parse_sections(raw_text)
-    profile = profile_from_sections(raw_text, sections, tmp_path / "George Mpopo CV.docx")
+    profile = profile_from_sections(raw_text, sections, tmp_path / "Jordan Carter CV.docx")
     assert profile["identity"]["full_name"] == "GEORGE THABISO MPOPO"
     assert "Consultant" in profile["identity"]["headline"]
     assert len(profile["experience"]) == 1
@@ -35,7 +35,7 @@ def test_identity_can_appear_after_summary_without_reference_contamination(tmp_p
     082 000 0000
     jane.smith@example.com
 
-    Lavina Jacobs
+    Casey Blake
     Project Coordinator
     lavina@example.com
     083 111 2222
@@ -43,8 +43,8 @@ def test_identity_can_appear_after_summary_without_reference_contamination(tmp_p
     Diploma in Project Management | PM Institute | 2020
     """
     sections = parse_sections(raw_text)
-    identity = extract_identity(raw_text, sections, tmp_path / "Share CV of Lavina Jacobs .docx")
-    assert identity["full_name"] == "Lavina Jacobs"
+    identity = extract_identity(raw_text, sections, tmp_path / "Share CV of Casey Blake .docx")
+    assert identity["full_name"] == "Casey Blake"
     assert identity["email"] == "lavina@example.com"
     assert identity["phone"] == "083 111 2222"
 
@@ -75,7 +75,7 @@ def test_academic_projects_do_not_become_career_history(tmp_path: Path):
     References on Request
     """
     sections = parse_sections(raw_text)
-    profile = profile_from_sections(raw_text, sections, tmp_path / "Thandokuhle Mntambo - CV.pdf")
+    profile = profile_from_sections(raw_text, sections, tmp_path / "Avery Patel - CV.pdf")
     assert len(profile["experience"]) == 1
     assert profile["experience"][0]["company"] == "OpenText"
     assert profile["experience"][0]["position"] == "QA Intern"
@@ -83,7 +83,7 @@ def test_academic_projects_do_not_become_career_history(tmp_path: Path):
 
 def test_weak_summary_blocks_review_even_when_other_sections_exist():
     state = {
-        "full_name": "Thandokuhle Mntambo",
+        "full_name": "Avery Patel",
         "headline": "QA Analyst",
         "summary": "I am a hardworking person seeking growth.",
         "skills": "Selenium\nAPI Testing",
@@ -96,7 +96,7 @@ def test_weak_summary_blocks_review_even_when_other_sections_exist():
 
 def test_profile_to_template_state_preserves_guarded_optional_defaults(tmp_path: Path):
     raw_text = """
-    Thandokuhle Mntambo
+    Avery Patel
     QA Analyst
     Skills
     Selenium | API Testing
@@ -115,7 +115,7 @@ def test_profile_to_template_state_preserves_guarded_optional_defaults(tmp_path:
 
 def test_career_history_responsibilities_are_not_duplicated(tmp_path: Path):
     raw_text = """
-    Lindelwe Myeza
+    Morgan Lee
     COBOL SOFTWARE DEVELOPER
     Career History
     FIRST NATIONAL BANK | COBOL SOFTWARE DEVELOPER | Feb 2024 | Present

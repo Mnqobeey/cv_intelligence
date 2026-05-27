@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
-$projectRoot = 'C:\Users\ThandokuhleM_7dgopdd\Downloads\cv_parser_latest'
-$pythonExe = 'C:\Users\ThandokuhleM_7dgopdd\AppData\Local\Programs\Python\Python313\python.exe'
+$projectRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
+$pythonExe = 'python'
 $outputDir = Join-Path $projectRoot 'storage\outputs'
 
 if (!(Test-Path $outputDir)) {

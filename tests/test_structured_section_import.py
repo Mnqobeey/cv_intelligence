@@ -5,12 +5,12 @@ from app.main import create_app
 
 STRUCTURED_SECTION_TEXT = """
 IDENTITY
-Full Name: Rudzani Mofokeng
+Full Name: Taylor Morgan
 Professional Headline: C# Developer
 Availability:
 Region:
-Email: rudzani902@gmail.com
-Phone: 0623626109
+Email: taylormorgan@example.com
+Phone: 0600000007
 Location: 3999 Crestfish street, Ext 20, Sky city
 LinkedIn:
 Portfolio: https://portfolio.example.com
@@ -74,7 +74,7 @@ def test_structured_section_text_uses_deterministic_mode_and_skips_detected_bloc
     assert payload["detected_blocks"] == []
     assert payload["source_sections"] == []
     assert payload["text_blocks"] == []
-    assert payload["template_state"]["full_name"] == "Rudzani Mofokeng"
+    assert payload["template_state"]["full_name"] == "Taylor Morgan"
     assert payload["template_state"]["headline"] == "C# Developer"
     assert payload["template_state"]["region"] == ""
     assert payload["template_state"]["location"] == "3999 Crestfish street, Ext 20, Sky city"
@@ -116,7 +116,7 @@ def test_structured_section_text_review_passes_from_parsed_state():
     payload = review.json()
 
     assert payload["workflow_state"]["can_download"] is True
-    assert payload["validated_export_json"]["identity"]["full_name"] == "Rudzani Mofokeng"
+    assert payload["validated_export_json"]["identity"]["full_name"] == "Taylor Morgan"
     assert payload["validated_export_json"]["identity"]["region"] == ""
     assert payload["validated_export_json"]["career_summary"] == "Experienced C# developer delivering internal tools, supporting recruiter-ready client work, and contributing to reliable business application delivery across fast-moving engagements."
     assert payload["validated_export_json"]["skills"] == [

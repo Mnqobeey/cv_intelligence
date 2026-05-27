@@ -10,7 +10,7 @@ from app.utils_text import extract_text
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 INNOCENT_PDF = BASE_DIR / "uploads" / "24bb9db5-6662-4de2-a0d1-dd47820c5fa2.pdf"
-INNOCENT_SOURCE_NAME = Path("CV_Innocent_Phiri.pdf")
+INNOCENT_SOURCE_NAME = Path("CV_Riley_Jordan.pdf")
 EXPECTED_RESPONSIBILITIES = [
     "Designed and executed automated test scripts using Java + Selenium",
     "Developed structured manual test cases from system requirements",
@@ -37,11 +37,11 @@ def test_innocent_pdf_shared_pipeline_reclassifies_dense_leakage_cleanly():
     state = profile_to_template_state(profile)
     issues = validate_profile_readiness(state)
 
-    assert profile["identity"]["full_name"] == "Innocent Celimpilo Phiri"
-    assert state["full_name"] == "Innocent Celimpilo Phiri"
+    assert profile["identity"]["full_name"] == "Riley Jordan"
+    assert state["full_name"] == "Riley Jordan"
     assert state["headline"] == "Junior Software Tester"
-    assert state["email"] == "innocentmpilo1@gmail.com"
-    assert state["phone"] == "+27 64 707 0704"
+    assert state["email"] == "rileyjordan@example.com"
+    assert state["phone"] == "+27 82 000 0001"
     assert "Midrand" in state["region"]
     assert state["linkedin"].endswith("innocent-celimpilo-phiri-632796279")
     assert state["summary"].startswith("Detail-oriented Software Tester with hands-on experience")
@@ -54,7 +54,7 @@ def test_innocent_pdf_shared_pipeline_reclassifies_dense_leakage_cleanly():
     assert "Java,Python,C++,C#,JavaScript,Php, SQL, HTML_5,CSS, XML" in skill_lines
     for forbidden in [
         "2 Diagonal Street Gauteng Midrand 1685",
-        "+27 64 707 0704 | innocentmpilo1@gmail.com",
+        "+27 82 000 0001 | rileyjordan@example.com",
         "Date of Birth",
         "Marital Status",
         "Nationality",
@@ -119,7 +119,7 @@ def test_innocent_pdf_upload_flow_is_review_ready_without_cross_section_leakage(
     workflow = payload["workflow_state"]
     review_sections = {section["key"]: section for section in payload["review_board"]["sections"]}
 
-    assert state["full_name"] == "Innocent Celimpilo Phiri"
+    assert state["full_name"] == "Riley Jordan"
     assert state["headline"] == "Junior Software Tester"
     assert state["summary"].startswith("Detail-oriented Software Tester with hands-on experience")
     assert state["education"]

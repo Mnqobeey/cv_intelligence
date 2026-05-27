@@ -63,10 +63,10 @@ def _ensure_missing_targeted_fixtures() -> None:
         "24bb9db5-6662-4de2-a0d1-dd47820c5fa2.pdf": (
             "pdf",
             [
-                "Innocent Celimpilo Phiri",
+                "Riley Jordan",
                 "Junior Software Tester",
-                "Email: innocentmpilo1@gmail.com",
-                "Phone: +27 64 707 0704",
+                "Email: rileyjordan@example.com",
+                "Phone: +27 82 000 0001",
                 "LinkedIn: https://www.linkedin.com/in/innocent-celimpilo-phiri-632796279",
                 "Address: 2 Diagonal Street Gauteng Midrand 1685",
                 "",
@@ -103,7 +103,7 @@ def _ensure_missing_targeted_fixtures() -> None:
         "6d7364d2-bc09-46d8-aeb4-8efdfaccd4c5.pdf": (
             "pdf",
             [
-                "Lavina Jacobs",
+                "Casey Blake",
                 "Project Co-ordinator",
                 "Availability: Immediately",
                 "Gender: Female",
@@ -144,7 +144,7 @@ def _ensure_missing_targeted_fixtures() -> None:
         "6e70d4bc-9b01-4700-acd3-190bb375e723.docx": (
             "docx",
             [
-                "Lavina Jacobs",
+                "Casey Blake",
                 "Project Co-ordinator",
                 "Availability: Immediately",
                 "Gender: Female",
@@ -164,7 +164,7 @@ def _ensure_missing_targeted_fixtures() -> None:
         "fcd22d91-3baf-42a5-b10f-b06199029a11.pdf": (
             "pdf",
             [
-                "Lindelwe Myeza",
+                "Morgan Lee",
                 "COBOL SOFTWARE DEVELOPER",
                 "",
                 "Candidate Summary",
@@ -191,7 +191,7 @@ def _ensure_missing_targeted_fixtures() -> None:
         "9213916c-303d-4a2e-94dd-d26efa1bc9c5.docx": (
             "docx",
             [
-                "SANDISIWE VUTULA",
+                "JAMIE CARTER",
                 "Senior Software Engineer",
                 "Availability: Notice period not applicable / immediate",
                 "Region: Johannesburg",

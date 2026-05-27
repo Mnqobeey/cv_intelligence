@@ -3201,7 +3201,7 @@ def clean_experience_entries(entries: List[Dict[str, Any]]) -> List[Dict[str, An
     return cleaned
 
 # ---------------------------------------------------------------------------
-# Final Lindelwe-focused extraction overrides
+# Final sample-focused extraction overrides
 # ---------------------------------------------------------------------------
 
 _DEFENSIVE_STOP_HEADINGS = {
@@ -4042,7 +4042,7 @@ def extract_identity(raw_text: str, sections: List[SectionBlock], path: Optional
 
 
 # ---------------------------------------------------------------------------
-# Final Lindelwe recovery refinements for role recognition and supplemental scans
+# Final sample recovery refinements for role recognition and supplemental scans
 # ---------------------------------------------------------------------------
 
 def _looks_like_role_title_local(text: str) -> bool:
@@ -6268,7 +6268,7 @@ def extract_identity(raw_text: str, sections: List[SectionBlock], path: Optional
 
 
 # ---------------------------------------------------------------------------
-# Final targeted Thandokuhle identity and education fixes
+# Final targeted sample identity and education fixes
 # ---------------------------------------------------------------------------
 
 _IDENTITY_NAME_REJECT_HEADINGS = {
@@ -9162,7 +9162,7 @@ def _extract_safe_phone_from_lines(lines: List[str]) -> str:
         if label in _IDENTITY_PHONE_LABELS:
             if _phone_candidate_is_safe(value, raw):
                 return re.sub(r"\s+", " ", value).strip()
-            # Try splitting on "/" for multi-phone values like "0710093985/ 0720900034"
+            # Try splitting on "/" for multi-phone values like "0600000002/ 0600000003"
             for part in re.split(r"\s*/\s*", value):
                 part = part.strip()
                 if part and _phone_candidate_is_safe(part, raw):

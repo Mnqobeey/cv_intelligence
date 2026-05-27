@@ -1256,8 +1256,8 @@ def profile_from_sections(raw_text: str, sections: List[Any], path: Path) -> Dic
     else:
         # If filename-derived name is a strict subset of the document name
         # (sharing words), prefer the longer document name – it is more
-        # complete.  E.g. filename "Prince Mafolo" vs document "Mochabo
-        # Prince Mafolo".
+        # complete, such as a shortened filename compared with the document
+        # identity.
         filename_name = infer_name_from_filename(path.name) if path else None
         if filename_name:
             doc_name = sanitize_entity_text(profile["identity"].get("full_name")) or ""

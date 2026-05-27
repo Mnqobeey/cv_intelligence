@@ -6,7 +6,7 @@ from app.parsers import parse_sections
 
 def test_skill_line_does_not_become_headline(tmp_path: Path):
     raw = """
-    Thandokuhle Mntambo
+    Avery Patel
     Selenium
     Jira
     API Testing
@@ -62,9 +62,9 @@ def test_references_do_not_leak_into_career_history_and_headings_terminate_exper
 
 def test_email_domain_fragment_does_not_become_portfolio(tmp_path: Path):
     raw = """
-    Thandokuhle Mntambo
+    Avery Patel
     QA Analyst
-    Email: thando@gmail.com
+    Email: averyqa@example.com
     Career History
     OpenText | QA Analyst | Jan 2025 | Present
     Validated API and web workflows.
@@ -78,7 +78,7 @@ def test_email_domain_fragment_does_not_become_portfolio(tmp_path: Path):
 
 def test_most_recent_professional_role_becomes_headline_in_multi_role_cv(tmp_path: Path):
     raw = """
-    Thandokuhle Mntambo
+    Avery Patel
     Profile
     Aspiring technology professional with a passion for testing.
     Career History
@@ -96,7 +96,7 @@ def test_most_recent_professional_role_becomes_headline_in_multi_role_cv(tmp_pat
 
 def test_review_honesty_marks_reference_contaminated_history_for_review():
     state = {
-        'full_name': 'Thandokuhle Mntambo',
+        'full_name': 'Avery Patel',
         'headline': 'QA Analyst',
         'summary': 'QA Analyst with experience in web and API testing.',
         'skills': 'Testing: API Testing\nTools: Jira',
@@ -112,7 +112,7 @@ def test_review_honesty_marks_reference_contaminated_history_for_review():
 
 def test_review_readiness_allows_academic_employment_roles():
     state = {
-        'full_name': 'Thandokuhle Mntambo',
+        'full_name': 'Avery Patel',
         'headline': 'Research Assistant',
         'summary': 'Research assistant supporting data collection, lab coordination, and delivery of structured reporting across university projects.',
         'skills': 'Research Tools: Excel\nDelivery: Documentation',

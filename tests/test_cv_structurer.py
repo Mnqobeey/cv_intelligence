@@ -32,7 +32,7 @@ def _minimal_valid_cv_json() -> Dict[str, Any]:
     return {
         "cestacv_version": 1,
         "identity": {
-            "full_name": "Lerato Mokoena",
+            "full_name": "Alex Morgan",
             "headline": "Senior Software Developer",
             "availability": "",
             "region": "",
@@ -65,7 +65,7 @@ def _minimal_valid_cv_json() -> Dict[str, Any]:
     }
 
 
-RAW_CV_TEXT = """Lerato Mokoena
+RAW_CV_TEXT = """Alex Morgan
 Senior Software Developer
 Email: lerato@example.com
 Phone: +27 82 555 1234
@@ -176,7 +176,7 @@ class TestStructureCvText:
                 structure_cv_text(RAW_CV_TEXT)
             )
             assert strategy == "internally_structured"
-            assert data["identity"]["full_name"] == "Lerato Mokoena"
+            assert data["identity"]["full_name"] == "Alex Morgan"
             assert isinstance(data["career_history"], list)
 
     def test_success_with_markdown_fences(self, monkeypatch):
@@ -243,7 +243,7 @@ class TestUploadUsesStructuredPath:
 
         # Should be internally structured, not raw fallback
         assert payload.get("import_mode") == "internally_structured"
-        assert payload["template_state"]["full_name"] == "Lerato Mokoena"
+        assert payload["template_state"]["full_name"] == "Alex Morgan"
 
     def test_paste_text_falls_back_to_raw_when_structurer_unavailable(self, monkeypatch):
         """When no API key is set, the legacy parser should handle the upload."""
@@ -290,7 +290,7 @@ class TestStructuredJsonImportPreserved:
         payload = response.json()
         assert payload["import_mode"] == "structured_json"
         assert payload["structured_source"] is True
-        assert payload["template_state"]["full_name"] == "Rudzani Mofokeng"
+        assert payload["template_state"]["full_name"] == "Taylor Morgan"
 
 
 # ---------------------------------------------------------------------------
@@ -351,7 +351,7 @@ class TestEndToEndInternalStructurerFlow:
 
         assert data["import_mode"] == "internally_structured"
         assert data["structured_source"] is True
-        assert data["template_state"]["full_name"] == "Lerato Mokoena"
+        assert data["template_state"]["full_name"] == "Alex Morgan"
         assert data["template_state"]["headline"] == "Senior Software Developer"
         assert "preview_html" in data
         assert len(data["preview_html"]) > 100
@@ -367,7 +367,7 @@ class TestEndToEndInternalStructurerFlow:
         review_data = review.json()
         assert review_data["workflow_state"]["can_download"] is True
         assert "validated_export_json" in review_data
-        assert review_data["validated_export_json"]["identity"]["full_name"] == "Lerato Mokoena"
+        assert review_data["validated_export_json"]["identity"]["full_name"] == "Alex Morgan"
 
         # Step 3: Download DOCX
         download = client.post(
@@ -379,7 +379,7 @@ class TestEndToEndInternalStructurerFlow:
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
         assert len(download.content) > 1000
-        assert "Lerato_Mokoena" in download.headers.get("content-disposition", "")
+        assert "Alex_Morgan" in download.headers.get("content-disposition", "")
 
     def test_fallback_upload_review_download_also_works(self, monkeypatch):
         """Legacy fallback path must still produce a downloadable DOCX."""

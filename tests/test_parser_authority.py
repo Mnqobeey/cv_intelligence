@@ -57,6 +57,6 @@ def test_parser_readiness_validator_delegates_to_normalizer(monkeypatch) -> None
 
     monkeypatch.setattr(normalizers, "validate_profile_readiness", fake_validate)
 
-    sample_state = {"full_name": "Lerato Mokoena"}
+    sample_state = {"full_name": "Alex Morgan"}
     assert parsers.validate_profile_readiness(sample_state) is sentinel
     assert calls == [sample_state]

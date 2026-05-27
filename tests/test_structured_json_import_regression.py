@@ -8,12 +8,12 @@ from app.main import create_app
 STRUCTURED_JSON_SAMPLE = {
     "cestacv_version": 1,
     "identity": {
-        "full_name": "\n  Rudzani Mofokeng  \n",
+        "full_name": "\n  Taylor Morgan  \n",
         "headline": "C# Developer",
         "availability": "",
         "region": "",
-        "email": "rudzani902@gmail.com\n",
-        "phone": "0623626109",
+        "email": "taylormorgan@example.com\n",
+        "phone": "0600000007",
         "location": "3999 Crestfish street, Ext 20, Sky city",
         "linkedin": "",
         "portfolio": "",
@@ -44,7 +44,7 @@ STRUCTURED_JSON_SAMPLE = {
     "additional_sections": [{"title": "Notice Period", "content": "\n30 days\n"}],
 }
 
-JOSHUA_RATAU_JSON = """{"cestacv_version":1,"identity":{"full_name":"Joshua Ratau","headline":"Full Stack Developer – Specializing in Web and Mobile Applications","availability":"","region":"","email":"Joshuaratau@gmail.com","phone":"0739395126","location":"","linkedin":"","portfolio":""},"career_summary":"Highly Skilled Full Stack Developer with 5 years of experience in both front-end and back-end web and mobile application development. Skilled in leveraging the latest technologies to build scalable, responsive, user-friendly applications. Demonstrated ability to work across the full Software development lifecycle, from ideation to deployment. Proficient in a multitude of languages and frameworks, and always eager to learn and adopt emerging trends. Passionate about delivering efficient, high-quality solutions that provides a seamless experience for end-users. Committed to collaborating with cross-functional teams to achieve project goals and exceed client expectations.","skills":[{"category":"Frontend","items":["WordPress","React","Angular","HTML5","CSS3","JavaScript (ES6+)"]},{"category":"Backend","items":["Node.js","Express.js","Laravel","ASP.NET (C#)"]}],"qualifications":[{"qualification":"Diploma In Information Technology","institution":"University Of South Africa","year":"2017"}],"certifications":[{"name":"Web And Mobile Development Certificate","provider":"Mlab","year":"2018"}],"training":[],"achievements":[],"languages":[],"interests":[],"references":[],"projects":[],"career_history":[{"job_title":"Full Stack Developer","company":"SA@Play","start_date":"October 2021","end_date":"October 2025","responsibilities":["Build and integrate secure RESTful APIs with structured JSON responses."]}],"additional_sections":[]}"""
+DEVON_CARTER_JSON = """{"cestacv_version":1,"identity":{"full_name":"Devon Carter","headline":"Full Stack Developer – Specializing in Web and Mobile Applications","availability":"","region":"","email":"devoncarter@example.com","phone":"0600000008","location":"","linkedin":"","portfolio":""},"career_summary":"Highly Skilled Full Stack Developer with 5 years of experience in both front-end and back-end web and mobile application development. Skilled in leveraging the latest technologies to build scalable, responsive, user-friendly applications. Demonstrated ability to work across the full Software development lifecycle, from ideation to deployment. Proficient in a multitude of languages and frameworks, and always eager to learn and adopt emerging trends. Passionate about delivering efficient, high-quality solutions that provides a seamless experience for end-users. Committed to collaborating with cross-functional teams to achieve project goals and exceed client expectations.","skills":[{"category":"Frontend","items":["WordPress","React","Angular","HTML5","CSS3","JavaScript (ES6+)"]},{"category":"Backend","items":["Node.js","Express.js","Laravel","ASP.NET (C#)"]}],"qualifications":[{"qualification":"Diploma In Information Technology","institution":"University Of South Africa","year":"2017"}],"certifications":[{"name":"Web And Mobile Development Certificate","provider":"Mlab","year":"2018"}],"training":[],"achievements":[],"languages":[],"interests":[],"references":[],"projects":[],"career_history":[{"job_title":"Full Stack Developer","company":"SA@Play","start_date":"October 2021","end_date":"October 2025","responsibilities":["Build and integrate secure RESTful APIs with structured JSON responses."]}],"additional_sections":[]}"""
 
 
 def test_structured_json_import_uses_canonical_fields_and_skips_detected_blocks():
@@ -56,9 +56,9 @@ def test_structured_json_import_uses_canonical_fields_and_skips_detected_blocks(
     assert payload["structured_source"] is True
     assert payload["import_mode"] == "structured_json"
     assert payload["structured_parse_strategy"] == "direct_json"
-    assert payload["template_state"]["full_name"] == "Rudzani Mofokeng"
+    assert payload["template_state"]["full_name"] == "Taylor Morgan"
     assert payload["template_state"]["headline"] == "C# Developer"
-    assert payload["template_state"]["email"] == "rudzani902@gmail.com"
+    assert payload["template_state"]["email"] == "taylormorgan@example.com"
     assert payload["profile"]["document_meta"]["structured_parse_strategy"] == "direct_json"
     assert payload["template_state"]["region"] == ""
     assert payload["template_state"]["location"] == "3999 Crestfish street, Ext 20, Sky city"
@@ -104,10 +104,10 @@ def test_invalid_json_paste_falls_back_to_raw_text_mode_safely():
 
 def test_non_json_cv_text_still_uses_raw_cv_text_mode():
     client = TestClient(create_app())
-    raw_cv_text = """Joshua Ratau
+    raw_cv_text = """Devon Carter
 Full Stack Developer
-0739395126
-Joshuaratau@gmail.com
+0600000008
+devoncarter@example.com
 
 Experience
 SA@Play
@@ -122,15 +122,15 @@ Built and integrated secure RESTful APIs.
     assert payload.get("import_mode") != "structured_json"
     assert payload.get("structured_source") is not True
     assert payload.get("structured_parse_strategy") is None
-    assert payload["raw_text"].startswith("Joshua Ratau")
+    assert payload["raw_text"].startswith("Devon Carter")
     assert isinstance(payload["text_blocks"], list)
     assert isinstance(payload["source_sections"], list)
 
 
 def test_structured_json_import_repairs_literal_newlines_inside_string_values():
     client = TestClient(create_app())
-    broken_json = """{"cestacv_version":1,"identity":{"full_name":"Joshua Ratau","headline":"Full Stack Developer","availability":"","region":"","email":"Joshuaratau@gmail.com
-","phone":"0739395126","location":"","linkedin":"","portfolio":""},"career_summary":"Experienced full stack developer delivering reliable web and mobile applications across the full software lifecycle.","skills":[{"category":"Frontend","items":["React","Angular"]}],"qualifications":[{"qualification":"Diploma In Information Technology","institution":"University Of South Africa","year":"2017"}],"certifications":[{"name":"Web And Mobile Development Certificate","provider":"Mlab","year":"2018"}],"training":[],"achievements":[],"languages":[],"interests":[],"references":[],"projects":[],"career_history":[{"job_title":"Full Stack Developer","company":"SA@Play","start_date":"October 2021","end_date":"October 2025","responsibilities":["Built and maintained scalable web applications."]}],"additional_sections":[]}"""
+    broken_json = """{"cestacv_version":1,"identity":{"full_name":"Devon Carter","headline":"Full Stack Developer","availability":"","region":"","email":"devoncarter@example.com
+","phone":"0600000008","location":"","linkedin":"","portfolio":""},"career_summary":"Experienced full stack developer delivering reliable web and mobile applications across the full software lifecycle.","skills":[{"category":"Frontend","items":["React","Angular"]}],"qualifications":[{"qualification":"Diploma In Information Technology","institution":"University Of South Africa","year":"2017"}],"certifications":[{"name":"Web And Mobile Development Certificate","provider":"Mlab","year":"2018"}],"training":[],"achievements":[],"languages":[],"interests":[],"references":[],"projects":[],"career_history":[{"job_title":"Full Stack Developer","company":"SA@Play","start_date":"October 2021","end_date":"October 2025","responsibilities":["Built and maintained scalable web applications."]}],"additional_sections":[]}"""
     response = client.post("/api/upload-text", json={"text": broken_json})
     assert response.status_code == 200, response.text
     payload = response.json()
@@ -138,8 +138,8 @@ def test_structured_json_import_repairs_literal_newlines_inside_string_values():
     assert payload["structured_source"] is True
     assert payload["import_mode"] == "structured_json"
     assert payload["structured_parse_strategy"] == "repaired_json"
-    assert payload["template_state"]["full_name"] == "Joshua Ratau"
-    assert payload["template_state"]["email"] == "Joshuaratau@gmail.com"
+    assert payload["template_state"]["full_name"] == "Devon Carter"
+    assert payload["template_state"]["email"] == "devoncarter@example.com"
     assert "Full Name is required before build can pass." not in payload["workflow_state"]["blocking_issues"]
     assert "Career History is required before build can pass." not in payload["workflow_state"]["blocking_issues"]
     assert payload["detected_blocks"] == []
@@ -148,7 +148,7 @@ def test_structured_json_import_repairs_literal_newlines_inside_string_values():
 
 def test_structured_json_import_extracts_json_from_polluted_ui_text_and_hydrates_joshua_case():
     client = TestClient(create_app())
-    polluted_text = f"Upload File\nPaste Text\nPaste CV Text\n{JOSHUA_RATAU_JSON}"
+    polluted_text = f"Upload File\nPaste Text\nPaste CV Text\n{DEVON_CARTER_JSON}"
     response = client.post("/api/upload-text", json={"text": polluted_text})
     assert response.status_code == 200, response.text
     payload = response.json()
@@ -159,10 +159,10 @@ def test_structured_json_import_extracts_json_from_polluted_ui_text_and_hydrates
     assert payload["detected_blocks"] == []
     assert payload["source_sections"] == []
     assert payload["text_blocks"] == []
-    assert payload["template_state"]["full_name"] == "Joshua Ratau"
+    assert payload["template_state"]["full_name"] == "Devon Carter"
     assert payload["template_state"]["headline"] == "Full Stack Developer – Specializing in Web and Mobile Applications"
-    assert payload["template_state"]["phone"] == "0739395126"
-    assert payload["template_state"]["email"] == "Joshuaratau@gmail.com"
+    assert payload["template_state"]["phone"] == "0600000008"
+    assert payload["template_state"]["email"] == "devoncarter@example.com"
     assert payload["template_state"]["education"] == "Diploma In Information Technology | University Of South Africa | 2017"
     assert "Upload File" not in payload["template_state"]["full_name"]
     assert "Upload File" not in payload["preview_html"]
@@ -175,7 +175,7 @@ def test_structured_json_import_extracts_json_from_polluted_ui_text_and_hydrates
 
 def test_structured_json_ignores_unrelated_embedded_json_and_selects_cestacv_schema_match():
     client = TestClient(create_app())
-    polluted_text = f'{{"foo":"bar"}}\nUpload File\nPaste Text\n{JOSHUA_RATAU_JSON}'
+    polluted_text = f'{{"foo":"bar"}}\nUpload File\nPaste Text\n{DEVON_CARTER_JSON}'
     response = client.post("/api/upload-text", json={"text": polluted_text})
     assert response.status_code == 200, response.text
     payload = response.json()
@@ -183,9 +183,9 @@ def test_structured_json_ignores_unrelated_embedded_json_and_selects_cestacv_sch
     assert payload["structured_source"] is True
     assert payload["import_mode"] == "structured_json"
     assert payload["structured_parse_strategy"] == "embedded_json"
-    assert payload["template_state"]["full_name"] == "Joshua Ratau"
+    assert payload["template_state"]["full_name"] == "Devon Carter"
     assert payload["template_state"]["headline"] == "Full Stack Developer – Specializing in Web and Mobile Applications"
-    assert payload["template_state"]["phone"] == "0739395126"
+    assert payload["template_state"]["phone"] == "0600000008"
     assert payload["raw_text"].lstrip().startswith("{\n  \"cestacv_version\"")
     assert '"foo": "bar"' not in payload["raw_text"]
     assert '"foo":"bar"' not in payload["preview_html"]
@@ -198,7 +198,7 @@ def test_structured_json_preview_renders_clean_values_from_hydrated_state():
     payload = response.json()
     html = payload["preview_html"]
 
-    assert "Rudzani Mofokeng" in html
+    assert "Taylor Morgan" in html
     assert "C# Developer" in html
     assert "Built internal tools" in html
     assert "Internal Builder | Built recruiter workflow tooling" not in html
@@ -216,8 +216,8 @@ def test_structured_json_preview_uses_all_profile_experience_rows_when_flat_text
             "headline": "Junior Data Analyst | Power BI | SQL | Excel | Reporting & Data Quality",
             "availability": "",
             "region": "",
-            "email": "mnqobimntambo@gmail.com",
-            "phone": "078 568 3003",
+            "email": "averyqa@example.com",
+            "phone": "060 000 0009",
             "location": "Johannesburg, South Africa",
             "linkedin": "za.linkedin.com/in/thandokuhle-mntambo",
             "portfolio": "mnqobeey.netlify.app",
@@ -263,7 +263,7 @@ def test_structured_json_review_completion_passes_when_required_json_fields_exis
     review_payload = review.json()
 
     assert review_payload["workflow_state"]["can_download"] is True
-    assert review_payload["validated_export_json"]["identity"]["full_name"] == "Rudzani Mofokeng"
+    assert review_payload["validated_export_json"]["identity"]["full_name"] == "Taylor Morgan"
     assert review_payload["validated_export_json"]["identity"]["headline"] == "C# Developer"
     assert review_payload["validated_export_json"]["identity"]["region"] == ""
     assert review_payload["validated_export_json"]["career_summary"] == STRUCTURED_JSON_SAMPLE["career_summary"]

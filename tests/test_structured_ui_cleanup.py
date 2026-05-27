@@ -11,12 +11,12 @@ def test_structured_preview_shows_location_separately_from_region():
     payload = {
         "cestacv_version": 1,
         "identity": {
-            "full_name": "Rudzani Mofokeng",
+            "full_name": "Taylor Morgan",
             "headline": "C# Developer",
             "availability": "",
             "region": "",
-            "email": "rudzani902@gmail.com",
-            "phone": "0623626109",
+            "email": "taylormorgan@example.com",
+            "phone": "0600000007",
             "location": "3999 Crestfish street, Ext 20, Sky city",
             "linkedin": "",
             "portfolio": "",

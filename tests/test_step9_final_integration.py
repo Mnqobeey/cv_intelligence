@@ -8,7 +8,7 @@ from app.main import create_app
 STRUCTURED_CV = {
     "cestacv_version": 1,
     "identity": {
-        "full_name": "Lerato Mokoena",
+        "full_name": "Alex Morgan",
         "headline": "Senior Software Developer",
         "availability": "Immediate",
         "region": "Gauteng",
@@ -60,7 +60,7 @@ def test_structured_json_ingest_bypasses_free_text_parser_and_returns_recommenda
     assert response.status_code == 200, response.text
     payload = response.json()
     assert payload['structured_source'] is True
-    assert payload['template_state']['full_name'] == 'Lerato Mokoena'
+    assert payload['template_state']['full_name'] == 'Alex Morgan'
     assert 'Senior Software Developer' in payload['template_state']['career_history']
     assert isinstance(payload['recommendations'], list)
     assert 'education' in {item['target_key'] for item in payload['recommendations']}
@@ -75,7 +75,7 @@ def test_structured_json_ingest_accepts_fenced_json_without_falling_back_to_free
     assert response.status_code == 200, response.text
     payload = response.json()
     assert payload['structured_source'] is True
-    assert payload['template_state']['full_name'] == 'Lerato Mokoena'
+    assert payload['template_state']['full_name'] == 'Alex Morgan'
     assert payload['detected_blocks'] == []
     assert payload['source_sections'] == []
 

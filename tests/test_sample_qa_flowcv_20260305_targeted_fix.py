@@ -11,10 +11,10 @@ from app.schema import validate_export_payload
 
 
 FLOWCV_RAW = """
-Thandokuhle Mnqobi Mntambo
-QA Intern mnqobimntambo@gmail.com
+Avery Morgan Patel
+QA Intern averyqa@example.com
 
-078 568 3003
+060 000 0009
 
 Bryanston, South Africa
 
@@ -98,11 +98,11 @@ def test_flowcv_20260305_normalizes_certifications_skills_and_experience(tmp_pat
     profile = profile_from_sections(
         FLOWCV_RAW,
         parse_sections(FLOWCV_RAW),
-        tmp_path / "Thandokuhle_Mnqobi_Mntambo_FlowCV_Resume_2026-03-05 (3).pdf",
+        tmp_path / "Avery_Morgan_Patel_FlowCV_Resume_2026-03-05 (3).pdf",
     )
     state = profile_to_template_state(profile)
 
-    assert profile["identity"]["full_name"] == "Thandokuhle Mnqobi Mntambo"
+    assert profile["identity"]["full_name"] == "Avery Morgan Patel"
     assert profile["identity"]["headline"] == "QA Intern"
     assert profile["certifications"] == [
         "OpenText Certified Developer - Unified Functional Testing One (UFT One)",
@@ -177,7 +177,7 @@ def test_flowcv_20260305_preview_and_docx_use_abbreviated_month_dates(tmp_path: 
     profile = profile_from_sections(
         FLOWCV_RAW,
         parse_sections(FLOWCV_RAW),
-        tmp_path / "Thandokuhle_Mnqobi_Mntambo_CV.pdf",
+        tmp_path / "Avery_Morgan_Patel_CV.pdf",
     )
     state = profile_to_template_state(profile)
 

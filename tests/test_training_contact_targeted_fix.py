@@ -6,8 +6,8 @@ import pytest
 
 RAW_TEXT = (
     "Lethukuthula Brian Wanda\n\n"
-    "Cell Number: 0710093985/ 0720900034\n\n"
-    "Email Address: ThulasMathetha@gmail.com\n\n"
+    "Cell Number: 0600000002/ 0600000003\n\n"
+    "Email Address: training.sample@example.com\n\n"
     "PROFILE\n\n"
     "I am a Junior Software Developer with hands-on experience in Java Full stack and C#\n"
     "development. Skilled in building and supporting enterprise-level applications,\n"
@@ -105,7 +105,7 @@ def test_headline_not_professional_profile(template_state):
 
 def test_phone_extracted(profile):
     phone = profile["identity"].get("phone") or ""
-    assert "0710093985" in phone or "0720900034" in phone
+    assert "0600000002" in phone or "0600000003" in phone
 
 
 # --- Summary ---

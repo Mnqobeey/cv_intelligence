@@ -5,7 +5,7 @@ from app.main import create_app
 
 MESSY_HEADING_TEXT = """
  personal details
-Lerato Mokoena
+Alex Morgan
 Senior Software Developer
 Email : lerato@example.com   Phone: +27 82 555 1234
 Location : Johannesburg, South Africa
@@ -29,7 +29,7 @@ BSc Computer Science | University of Johannesburg | 2019
 """.strip()
 
 BROKEN_WRAP_TEXT = """
-Lerato Mokoena
+Alex Morgan
 Senior Software Developer
 Email: lerato@example.
 com
@@ -58,7 +58,7 @@ BSc Computer Science | University of Johannesburg | 2019
 """.strip()
 
 SAME_LINE_IDENTITY_TEXT = """
-Name: Rudzani Mofokeng | Email: rudzani902@gmail.com | Phone: +27 82 000 0000 | Location: Sky City
+Name: Taylor Morgan | Email: taylormorgan@example.com | Phone: +27 82 000 0000 | Location: Sky City
 Headline: C# Developer
 
 Professional Summary: Results-driven C# Developer with experience building reliable software platforms and supporting enterprise teams.
@@ -158,7 +158,7 @@ def test_paste_text_handles_inconsistent_heading_spacing_and_case():
     assert response.status_code == 200, response.text
     payload = response.json()
 
-    assert payload["template_state"]["full_name"] == "Lerato Mokoena"
+    assert payload["template_state"]["full_name"] == "Alex Morgan"
     assert payload["template_state"]["headline"] == "Senior Software Developer"
     assert "Employment History" not in payload["template_state"]["skills"]
 
@@ -183,7 +183,7 @@ def test_paste_text_same_line_identity_fields_and_academic_role_complete_review(
     assert response.status_code == 200, response.text
     payload = response.json()
 
-    assert payload["template_state"]["full_name"] == "Rudzani Mofokeng"
+    assert payload["template_state"]["full_name"] == "Taylor Morgan"
     assert payload["template_state"]["headline"] == "C# Developer"
     assert payload["template_state"]["location"] == "Sky City"
     assert "Research Assistant" in payload["template_state"]["career_history"]

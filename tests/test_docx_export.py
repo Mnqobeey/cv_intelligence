@@ -10,7 +10,7 @@ from app.schema import CandidateProfileSchema
 
 def sample_state():
     return {
-        "full_name": "George Thabiso Mpopo",
+        "full_name": "Jordan Lee Carter",
         "headline": "Senior / Lead Software Engineer",
         "availability": "Immediate / Negotiable",
         "region": "South Africa",
@@ -34,7 +34,7 @@ def sample_state():
 
 def test_final_payload_repairs_combined_role_and_company():
     payload = build_final_profile_payload(sample_state(), profile=None)
-    assert payload.identity["full_name"] == "George Thabiso Mpopo"
+    assert payload.identity["full_name"] == "Jordan Lee Carter"
     assert payload.career_history[0]["company"] == "Gijima Technologies"
     assert payload.career_history[0]["position"] == "Senior Full-Stack Software Developer"
     assert payload.career_history[1]["company"] == "Investec Bank Limited"
@@ -49,7 +49,7 @@ def test_docx_export_contains_expected_sections_and_uses_master_template(tmp_pat
     doc = Document(output)
     text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
     full_text = text + "\n" + "\n".join(cell.text for table in doc.tables for row in table.rows for cell in row.cells)
-    assert "George Thabiso Mpopo" in full_text
+    assert "Jordan Lee Carter" in full_text
     assert "Candidate Summary" in full_text
     assert "Career Summary" in full_text
     assert "Qualification" in full_text
@@ -120,7 +120,7 @@ def test_template_export_uses_master_template_role_markers_without_leakage(tmp_p
     assert "Career Summary" in full_text
     assert full_text.index("Career History") < full_text.index("OpenText")
     assert full_text.index("OpenText") < full_text.index("Acme")
-    assert "George Thabiso Mpopo" not in full_text
+    assert "Jordan Lee Carter" not in full_text
     assert "Gijima Technologies" not in full_text
 
 
@@ -162,7 +162,7 @@ def test_export_follows_strict_george_section_order(tmp_path: Path):
     build_profile_docx(output, sample_state(), profile=None)
     doc = Document(output)
     combined = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
-    assert combined.index("George Thabiso Mpopo") < combined.index("Candidate Summary")
+    assert combined.index("Jordan Lee Carter") < combined.index("Candidate Summary")
     assert combined.index("Candidate Summary") < combined.index("Skills")
     assert combined.index("Skills") < combined.index("Qualification")
     assert combined.index("Qualification") < combined.index("Certifications")
@@ -193,8 +193,8 @@ def test_export_applies_arial_template_and_bullet_list_formatting(tmp_path: Path
 
     heading_para = next(
         paragraph for paragraph in doc.paragraphs if paragraph.text.strip() in {
-            "George Thabiso Mpopo",
-            "George Thabiso Mpopo - Senior / Lead Software Engineer",
+            "Jordan Lee Carter",
+            "Jordan Lee Carter - Senior / Lead Software Engineer",
         }
     )
     role_para = next(
@@ -308,8 +308,8 @@ def test_export_uses_black_identity_text_and_solid_black_table_borders(tmp_path:
 
     heading_para = next(
         paragraph for paragraph in doc.paragraphs if paragraph.text.strip() in {
-            "George Thabiso Mpopo",
-            "George Thabiso Mpopo - Senior / Lead Software Engineer",
+            "Jordan Lee Carter",
+            "Jordan Lee Carter - Senior / Lead Software Engineer",
         }
     )
     role_para = next(

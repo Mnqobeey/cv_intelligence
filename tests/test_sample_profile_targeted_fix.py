@@ -85,7 +85,7 @@ def test_runtime_app_code_has_no_lavina_specific_override_markers():
     forbidden_markers = [
         "_LAVINA_",
         "_apply_lavina",
-        "Lavina Jacobs targeted recovery applied",
+        "Casey Blake targeted recovery applied",
         "benchmarked PDF/DOCX source set",
     ]
     for marker in forbidden_markers:
@@ -102,7 +102,7 @@ def test_lavina_pdf_upload_flow_is_source_driven_and_review_ready():
     qualification_block = _block_by_title(payload["detected_blocks"], "Qualifications")
     certification_block = _block_by_title(payload["detected_blocks"], "Certifications")
 
-    assert state["full_name"] == "Lavina Jacobs"
+    assert state["full_name"] == "Casey Blake"
     assert state["headline"] == "Project Co-ordinator"
     assert state["availability"] == "Immediately"
     assert state["region"] in {"Region not provided", "Not provided"}
@@ -192,7 +192,7 @@ def test_lavina_pdf_review_and_download_use_normalized_experience():
     assert review.status_code == 200, review.text
     validated = review.json()["validated_export_json"]
 
-    assert validated["identity"]["full_name"] == "Lavina Jacobs"
+    assert validated["identity"]["full_name"] == "Casey Blake"
     assert validated["identity"]["headline"] == "Project Co-ordinator"
     assert validated["identity"]["availability"] == "Immediately"
     assert validated["identity"]["region"] in {"Region not provided", "Not provided"}
@@ -209,7 +209,7 @@ def test_lavina_pdf_review_and_download_use_normalized_experience():
     )
     full_text = paragraph_text + "\n" + table_text
 
-    assert "Lavina Jacobs" in full_text
+    assert "Casey Blake" in full_text
     assert "Project Co-ordinator" in full_text
     assert "Candidate Summary" in paragraph_text
     assert "Skills" in paragraph_text
@@ -217,7 +217,7 @@ def test_lavina_pdf_review_and_download_use_normalized_experience():
     assert "Certifications" in paragraph_text
     assert "Career Summary" in paragraph_text
     assert "Career History" in paragraph_text
-    assert paragraph_text.index("Lavina Jacobs") < paragraph_text.index("Candidate Summary")
+    assert paragraph_text.index("Casey Blake") < paragraph_text.index("Candidate Summary")
     assert paragraph_text.index("Candidate Summary") < paragraph_text.index("Skills")
     assert paragraph_text.index("Skills") < paragraph_text.index("Qualification")
     assert paragraph_text.index("Qualification") < paragraph_text.index("Certifications")
@@ -236,7 +236,7 @@ def test_lavina_docx_extraction_stays_generic_and_honest_about_missing_history()
     profile = profile_from_sections(raw_text, sections, LAVINA_DOCX)
     state = profile_to_template_state(profile)
 
-    assert state["full_name"] == "Lavina Jacobs"
+    assert state["full_name"] == "Casey Blake"
     assert state["headline"] == "Project Co-ordinator"
     assert state["availability"] == "Immediately"
     assert state["summary"].startswith("I am a highly experienced Project Coordinator")

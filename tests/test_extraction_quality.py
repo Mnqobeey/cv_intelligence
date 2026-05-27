@@ -13,7 +13,7 @@ from app.utils_text import extract_text
 
 def test_docx_table_extraction_normalizes_qualifications_and_certifications(tmp_path: Path):
     doc = Document()
-    doc.add_paragraph("Thandokuhle Mntambo")
+    doc.add_paragraph("Avery Patel")
     doc.add_paragraph("QA Analyst")
     doc.add_paragraph("Qualifications")
     q_table = doc.add_table(rows=3, cols=3)
@@ -51,7 +51,7 @@ def test_pdf_table_like_extraction_normalizes_identity_and_experience(tmp_path: 
     page = pdf.new_page()
     y = 40
     for line in [
-        "Thandokuhle Mntambo",
+        "Avery Patel",
         "Software Tester",
         "Email: thando@example.com",
         "Career History",
@@ -68,7 +68,7 @@ def test_pdf_table_like_extraction_normalizes_identity_and_experience(tmp_path: 
     sections = parse_sections(raw_text)
     profile = profile_from_sections(raw_text, sections, path)
 
-    assert profile["identity"]["full_name"] == "Thandokuhle Mntambo"
+    assert profile["identity"]["full_name"] == "Avery Patel"
     assert profile["identity"]["headline"] == "Software Tester"
     assert any(entry.get("company") == "OpenText" for entry in profile["experience"])
     assert any(entry.get("position") == "QA Intern" for entry in profile["experience"])
@@ -85,14 +85,14 @@ def test_references_do_not_contaminate_identity(tmp_path: Path):
     jane@example.com
     """
     sections = parse_sections(raw_text)
-    identity = extract_identity(raw_text, sections, tmp_path / "Thandokuhle_Mntambo_CV.docx")
-    assert identity["full_name"] == "Thandokuhle Mntambo"
+    identity = extract_identity(raw_text, sections, tmp_path / "Avery_Patel_CV.docx")
+    assert identity["full_name"] == "Avery Patel"
     assert identity["full_name"] != "Dr Jane Smith"
 
 
 def test_weak_career_summary_is_rejected():
     state = {
-        "full_name": "Thandokuhle Mntambo",
+        "full_name": "Avery Patel",
         "headline": "QA Analyst",
         "summary": "I am a hardworking team player looking for growth.",
         "skills": "Selenium\nAPI Testing",
@@ -108,7 +108,7 @@ def test_review_is_reset_after_template_change():
     client = TestClient(app)
     doc = Document()
     for line in [
-        "George Thabiso Mpopo",
+        "Jordan Lee Carter",
         "Senior Software Engineer",
         "Summary",
         "Experienced software engineer delivering enterprise systems across regulated environments with strong implementation and delivery capability.",
@@ -138,18 +138,18 @@ def test_review_is_reset_after_template_change():
 
 
 def test_lindelwe_summary_name_and_paragraph_skills_are_preserved_from_source():
-    path = Path("/mnt/data/Lindelwe Myeza Resume 2025.pdf")
+    path = Path("/mnt/data/Morgan Lee Resume 2025.pdf")
     source_path = path
     if not path.exists():
         path = Path(__file__).resolve().parents[1] / "uploads" / "fcd22d91-3baf-42a5-b10f-b06199029a11.pdf"
-        source_path = Path("LINDELWE MYEZA Resume 2025.pdf")
+        source_path = Path("MORGAN LEE Resume 2025.pdf")
     raw_text = extract_text(path)
     sections = parse_sections(raw_text)
     profile = profile_from_sections(raw_text, sections, source_path)
     state = profile_to_template_state(profile)
 
-    using_original_source = source_path == Path("/mnt/data/Lindelwe Myeza Resume 2025.pdf")
-    expected_name = "LINDELWE MYEZA" if using_original_source else "Lindelwe Myeza"
+    using_original_source = source_path == Path("/mnt/data/Morgan Lee Resume 2025.pdf")
+    expected_name = "MORGAN LEE" if using_original_source else "Morgan Lee"
     assert profile["identity"]["full_name"] == expected_name
     assert state["summary"].startswith("Currently my short-term objectives are to gain new skills")
     expected_summary_fragment = (
@@ -167,7 +167,7 @@ def test_lindelwe_summary_name_and_paragraph_skills_are_preserved_from_source():
 
 def test_date_driven_tables_sort_most_recent_first_and_use_responsibilities_label(tmp_path: Path):
     raw = """
-    Thandokuhle Mntambo
+    Avery Patel
     QA Analyst
     Objective
     I am looking to build my testing career through structured delivery work.

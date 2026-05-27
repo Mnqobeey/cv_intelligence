@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from app.main import create_app
 
 
-RAW_PASTE_TEXT = """Lerato Mokoena
+RAW_PASTE_TEXT = """Alex Morgan
 Senior Software Developer
 Email: lerato@example.com
 Phone: +27 82 555 1234

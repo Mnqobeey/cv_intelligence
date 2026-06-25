@@ -95,3 +95,8 @@ class SQLiteDocumentStore:
                 modified = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
                 if modified < cutoff:
                     path.unlink(missing_ok=True)
+        with self._connection() as connection:
+            connection.execute(
+                "DELETE FROM documents WHERE updated_at < ?",
+                (cutoff.isoformat(),),
+            )

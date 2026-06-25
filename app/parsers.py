@@ -3807,12 +3807,12 @@ def _is_professional_experience(parsed: Dict[str, Any]) -> bool:
     role_company = f"{role} {company}"
     if any(term in role_company for term in ('volunteer', 'mentor')) or any(term in text for term in ('journalist', 'astroquiz', 'tanks tournament')):
         return False
-    academic_roles = ('student assistant', 'lab demonstrator', 'demonstrator', 'tutor', 'peer mentor', 'honours project', 'honors project', 'project')
+    academic_roles = ('student assistant', 'lab demonstrator', 'demonstrator', 'tutor', 'peer mentor', 'digiready buddy')
     academic_companies = ('university', 'school', 'academy', 'conference', 'lab', 'physics labs', 'computer labs')
-    if any(term in role for term in academic_roles) and any(term in company for term in academic_companies) and not any(term in company for term in commercial_markers):
+    if _looks_like_academic_role_title(role):
         return False
-    if any(term in role for term in ('student assistant', 'lab demonstrator', 'demonstrator', 'tutor', 'peer mentor')):
-        return False
+    if any(term in role for term in academic_roles):
+        return True
     if any(term in company for term in academic_companies) and not any(term in company for term in commercial_markers):
         return False
     return True
@@ -3941,6 +3941,8 @@ def _normalize_role_company_date_parts(parts: List[str]) -> Optional[Dict[str, A
     elif _looks_like_company_name(first) and _looks_like_role_title_local(second):
         company, role = first, second
     elif _looks_like_role_title_local(second):
+        company, role = first, second
+    elif len(parts) >= 4 and _looks_like_company_name(first) and format_recruiter_date(parts[2]) and format_recruiter_date(parts[3]):
         company, role = first, second
     else:
         return None

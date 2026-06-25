@@ -20,14 +20,14 @@ STRUCTURED_CV = {
     },
     "career_summary": "Results-driven Senior Software Developer with extensive experience building scalable web applications, improving delivery quality, and mentoring teams across complex enterprise environments.",
     "skills": [{"category": "Programming Languages", "items": ["Python", "JavaScript"]}],
-    "qualifications": [],
+    "qualifications": [{"qualification": "BSc Computer Science", "institution": "Example University", "year": "2018"}],
     "certifications": [{"name": "AWS Certified Developer", "provider": "AWS", "year": "2024"}],
-    "training": ["Advanced REST API Design"],
-    "achievements": ["Reduced processing time by 40%"],
-    "languages": ["English"],
-    "interests": ["Open-source software"],
-    "references": ["Available on request"],
-    "projects": ["Recruiter dashboard"],
+    "training": [],
+    "achievements": [],
+    "languages": [],
+    "interests": [],
+    "references": [],
+    "projects": [],
     "career_history": [
         {
             "job_title": "Senior Software Developer",
@@ -41,61 +41,50 @@ STRUCTURED_CV = {
 }
 
 
-def test_structuring_prompt_endpoint_exposes_prompt_and_schema():
+def test_removed_prompt_endpoint_returns_410():
     client = TestClient(create_app())
-    response = client.get('/api/structuring-prompt')
-    assert response.status_code == 200
-    payload = response.json()
-    assert payload['prompt_key'] == payload['recommended_prompt_key']
-    assert 'Return ONLY valid raw JSON.' in payload['prompt']
-    assert 'Do NOT use markdown code fences.' in payload['prompt']
-    assert 'ensure the output parses successfully with JSON.parse' in payload['prompt']
-    assert 'Self-Check Before Returning' in payload['prompt']
-    assert payload['schema_example']['identity']['full_name'] == ''
+    response = client.get("/api/structuring-prompt")
+    assert response.status_code == 410
 
 
-def test_structured_json_ingest_bypasses_free_text_parser_and_returns_recommendations():
+def test_structured_json_ingest_uses_lean_profile_response():
     client = TestClient(create_app())
-    response = client.post('/api/upload-text', json={'text': json.dumps(STRUCTURED_CV)})
+    response = client.post("/api/upload-text", json={"text": json.dumps(STRUCTURED_CV)})
     assert response.status_code == 200, response.text
     payload = response.json()
-    assert payload['structured_source'] is True
-    assert payload['template_state']['full_name'] == 'Alex Morgan'
-    assert 'Senior Software Developer' in payload['template_state']['career_history']
-    assert isinstance(payload['recommendations'], list)
-    assert 'education' in {item['target_key'] for item in payload['recommendations']}
-    assert 'Qualifications are required before build can pass.' in payload['workflow_state']['warning_issues']
-    assert payload['workflow_state']['blocking_issues'] == []
+
+    assert payload["structured_source"] is True
+    assert payload["import_mode"] == "structured_json"
+    assert payload["template_state"]["full_name"] == "Alex Morgan"
+    assert "Senior Software Developer" in payload["template_state"]["career_history"]
+    assert payload["detected_blocks"] == []
+    assert payload["source_sections"] == []
+    assert "recommendations" not in payload
+    assert payload["workflow_state"]["blocking_issues"] == []
 
 
-def test_structured_json_ingest_accepts_fenced_json_without_falling_back_to_free_text():
+def test_removed_restore_endpoint_returns_410_and_review_download_still_work():
     client = TestClient(create_app())
-    fenced = "```json\n" + json.dumps(STRUCTURED_CV, indent=2) + "\n```"
-    response = client.post('/api/upload-text', json={'text': fenced})
-    assert response.status_code == 200, response.text
-    payload = response.json()
-    assert payload['structured_source'] is True
-    assert payload['template_state']['full_name'] == 'Alex Morgan'
-    assert payload['detected_blocks'] == []
-    assert payload['source_sections'] == []
+    uploaded = client.post("/api/upload-text", json={"text": json.dumps(STRUCTURED_CV)}).json()
+    document_id = uploaded["document_id"]
 
-
-def test_restore_field_reverts_latest_change_and_missing_qualification_no_longer_blocks_review():
-    client = TestClient(create_app())
-    uploaded = client.post('/api/upload-text', json={'text': json.dumps(STRUCTURED_CV)}).json()
-    document_id = uploaded['document_id']
-
-    update = client.post(f'/api/document/{document_id}/template', json={'headline': 'Principal Engineer'})
+    update = client.post(f"/api/document/{document_id}/template", json={"headline": "Principal Engineer"})
     assert update.status_code == 200, update.text
-    assert 'headline' in update.json()['restorable_fields']
+    assert update.json()["workflow_state"]["can_download"] is False
 
-    restore = client.post(f'/api/document/{document_id}/restore-field', json={'target_key': 'headline'})
-    assert restore.status_code == 200, restore.text
-    restore_payload = restore.json()
-    assert restore_payload['template_state']['headline'] == 'Senior Software Developer'
+    restore = client.post(f"/api/document/{document_id}/restore-field", json={"target_key": "headline"})
+    assert restore.status_code == 410
 
-    review = client.post(f'/api/document/{document_id}/review-complete', json={'template_state': restore_payload['template_state']})
+    review = client.post(
+        f"/api/document/{document_id}/review-complete",
+        json={"template_state": update.json()["template_state"]},
+    )
     assert review.status_code == 200, review.text
-    review_payload = review.json()
-    assert review_payload['workflow_state']['can_download'] is True
-    assert 'Qualifications are required before build can pass.' in review_payload['workflow_state']['warning_issues']
+    assert review.json()["workflow_state"]["can_download"] is True
+
+    download = client.post(
+        f"/api/document/{document_id}/download",
+        json={"template_state": review.json()["template_state"]},
+    )
+    assert download.status_code == 200, download.text
+    assert len(download.content) > 1000

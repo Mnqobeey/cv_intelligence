@@ -89,20 +89,17 @@ def test_structured_json_import_preserves_empty_sections_without_leakage():
     assert '"name": "Jane Doe"' not in payload["preview_html"]
 
 
-def test_invalid_json_paste_falls_back_to_raw_text_mode_safely():
+def test_invalid_json_paste_requires_openrouter_in_lean_flow(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     client = TestClient(create_app())
     raw_text = '{"identity":{"full_name":"Broken JSON"'
     response = client.post("/api/upload-text", json={"text": raw_text})
-    assert response.status_code == 200, response.text
-    payload = response.json()
-
-    assert payload.get("import_mode") != "structured_json"
-    assert payload.get("structured_source") is not True
-    assert payload.get("structured_parse_strategy") is None
-    assert payload["raw_text"] == raw_text
+    assert response.status_code == 503
+    assert "OPENROUTER_API_KEY" in response.text
 
 
-def test_non_json_cv_text_still_uses_raw_cv_text_mode():
+def test_non_json_cv_text_requires_openrouter_in_lean_flow(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     client = TestClient(create_app())
     raw_cv_text = """Devon Carter
 Full Stack Developer
@@ -116,15 +113,8 @@ October 2021 - October 2025
 Built and integrated secure RESTful APIs.
 """
     response = client.post("/api/upload-text", json={"text": raw_cv_text})
-    assert response.status_code == 200, response.text
-    payload = response.json()
-
-    assert payload.get("import_mode") != "structured_json"
-    assert payload.get("structured_source") is not True
-    assert payload.get("structured_parse_strategy") is None
-    assert payload["raw_text"].startswith("Devon Carter")
-    assert isinstance(payload["text_blocks"], list)
-    assert isinstance(payload["source_sections"], list)
+    assert response.status_code == 503
+    assert "OPENROUTER_API_KEY" in response.text
 
 
 def test_structured_json_import_repairs_literal_newlines_inside_string_values():

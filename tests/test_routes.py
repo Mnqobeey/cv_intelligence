@@ -5,9 +5,68 @@ import sqlite3
 
 from docx import Document
 from fastapi.testclient import TestClient
+import pytest
 
 from app.constants import DATABASE_PATH
 from app.main import create_app
+
+
+def fake_openrouter_json() -> dict:
+    return {
+        "cestacv_version": 1,
+        "identity": {
+            "full_name": "Jordan Lee Carter",
+            "headline": "Senior / Lead Software Engineer",
+            "availability": "Immediate / Negotiable",
+            "region": "South Africa",
+            "email": "george@example.com",
+            "phone": "",
+            "location": "",
+            "linkedin": "",
+            "portfolio": "",
+        },
+        "career_summary": (
+            "Experienced software engineer delivering enterprise platforms across public and private sector environments, "
+            "leading modernisation work, improving delivery quality, and supporting scalable enterprise systems with disciplined execution."
+        ),
+        "skills": [{"category": "Core Skills", "items": ["C#", ".NET", "ASP.NET Core", "Angular", "Azure DevOps"]}],
+        "qualifications": [{"qualification": "BSc Degree in Computer Science", "institution": "University of Zululand", "year": "2007"}],
+        "certifications": [{"name": "TOGAF 9.2 Certification", "provider": "", "year": "2018"}],
+        "training": [],
+        "achievements": [],
+        "languages": [],
+        "interests": [],
+        "references": [],
+        "projects": [],
+        "career_history": [
+            {
+                "job_title": "Senior Full-Stack Software Developer",
+                "company": "Gijima Technologies",
+                "start_date": "Apr 2024",
+                "end_date": "Present",
+                "responsibilities": ["Lead full-stack development on national-scale government systems."],
+                "client_engagements": [],
+                "projects": [],
+            }
+        ],
+        "additional_sections": [],
+    }
+
+
+@pytest.fixture(autouse=True)
+def mock_openrouter(monkeypatch):
+    async def fake_structure(raw_text: str):
+        assert raw_text.strip()
+        return fake_openrouter_json(), {
+            "provider": "openrouter",
+            "model": "test/model",
+            "usage": {"total_tokens": 123},
+            "generation_id": "test-generation",
+        }
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setenv("CV_INTELLIGENCE_LLM_MODE", "required")
+    monkeypatch.setattr("app.routes.structure_cv_text_with_openrouter", fake_structure)
 
 
 def make_upload_docx() -> bytes:
@@ -116,7 +175,7 @@ def test_download_rebuilds_validated_export_when_reviewed_document_loses_cached_
     assert len(download.content) > 1000
 
 
-def test_export_revalidates_when_template_state_changes_after_review_complete(tmp_path: Path):
+def test_download_revalidates_when_template_state_changes_after_review_complete(tmp_path: Path):
     app = create_app()
     client = TestClient(app)
     data = upload_sample(client)
@@ -131,19 +190,32 @@ def test_export_revalidates_when_template_state_changes_after_review_complete(tm
     mutated["summary"] = (mutated.get("summary") or "") + " UNIQUE_EXPORT_TOKEN_42"
     mutated["headline"] = "Updated Headline UNIQUE_EXPORT_HEADLINE_42"
 
-    export = client.post(
-        f"/api/document/{data['document_id']}/export",
+    download = client.post(
+        f"/api/document/{data['document_id']}/download",
         json={"template_state": mutated},
     )
-    assert export.status_code == 200, export.text
-    files = export.json()
-
-    docx = client.get(files["docx_file"])
-    assert docx.status_code == 200, docx.text
-    doc = Document(BytesIO(docx.content))
+    assert download.status_code == 200, download.text
+    doc = Document(BytesIO(download.content))
     full_text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
+    full_text += "\n" + "\n".join(
+        cell.text
+        for table in doc.tables
+        for row in table.rows
+        for cell in row.cells
+        if cell.text.strip()
+    )
     assert "UNIQUE_EXPORT_TOKEN_42" in full_text
     assert "UNIQUE_EXPORT_HEADLINE_42" in full_text
+
+
+def test_removed_export_endpoint_returns_410(tmp_path: Path):
+    app = create_app()
+    client = TestClient(app)
+    data = upload_sample(client)
+
+    response = client.post(f"/api/document/{data['document_id']}/export", json={})
+
+    assert response.status_code == 410
 
 
 def test_preview_is_locked_to_george_sections(tmp_path: Path):

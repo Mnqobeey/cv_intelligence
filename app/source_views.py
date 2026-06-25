@@ -77,3 +77,12 @@ def build_docx_source_view(file_path: Path) -> Dict[str, Any]:
     chunks = []
     for p in doc.paragraphs:
         txt = p.text.strip()
+        if txt:
+            chunks.append(txt)
+    for table in doc.tables:
+        for row in table.rows:
+            cells = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+            if cells:
+                chunks.append(" | ".join(cells))
+    paras = [html.escape(chunk) for chunk in chunks if chunk.strip()]
+    return {"type": "html_document", "html": "".join(f"<p>{p}</p>" for p in paras)}

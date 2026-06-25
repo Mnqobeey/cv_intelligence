@@ -152,7 +152,10 @@ def test_consulting_cv6_docx_uses_client_engagement_heading_and_vertical_skills(
     detail_tables = [table for table in doc.tables if any("Company Name" in cell.text for row in table.rows for cell in row.cells)]
 
     assert "Core Skills:" not in full_text
-    assert "Python\nLinux\nAzure\nTerraform\nKubernetes\nDocker\nKafka\nSelenium" in paragraph_text
+    assert "\n".join(
+        f"\u2022 {skill}"
+        for skill in ["Python", "Linux", "Azure", "Terraform", "Kubernetes", "Docker", "Kafka", "Selenium"]
+    ) in paragraph_text
     assert "Python, Linux, Azure, Terraform, Kubernetes, Docker, Kafka, Selenium" not in full_text
     assert len(detail_tables) == 2
 

@@ -67,7 +67,8 @@ SCHEMA_EXAMPLE: Dict[str, Any] = {
 SCHEMA_JSON = json.dumps(SCHEMA_EXAMPLE, indent=2, ensure_ascii=False)
 
 PRE_PASTE_GUIDANCE = (
-    "Paste only valid raw JSON. Do not wrap the output in markdown."
+    "Paste only valid raw JSON. Do not wrap the output in markdown. "
+    "Use Strict JSON Repair / Cleanup when you already have a draft JSON object."
 )
 
 BASE_OUTPUT_RULES = [
@@ -164,7 +165,50 @@ PROMPT_PRESETS: tuple[PromptPreset, ...] = (
         ),
         recommended=True,
     ),
-
+    PromptPreset(
+        key="pasted_cv_text_to_json",
+        label="Pasted CV Text to JSON",
+        description="Use when the source is copied plain text from a CV or profile.",
+        task="Convert pasted CV text into a single valid CestaCV JSON object for system import.",
+        extra_rules=(
+            "Repair broken line wrapping before assigning fields.",
+            "Treat repeated page headers, footers, and upload UI labels as noise.",
+            "Keep source order while joining wrapped responsibilities and split contact details.",
+        ),
+    ),
+    PromptPreset(
+        key="strict_json_repair",
+        label="Strict JSON Repair / Cleanup",
+        description="Use when a draft JSON object is present but may be malformed or messy.",
+        task="Repair the provided CestaCV JSON draft so it is strict, valid, paste-ready JSON.",
+        extra_rules=(
+            "Fix malformed JSON, trim strings, and remove literal line breaks inside string values.",
+            "Keep all facts already present unless they violate the schema or are obvious duplicate noise.",
+            "Do not convert this into prose; return the repaired JSON object only.",
+        ),
+    ),
+    PromptPreset(
+        key="structured_section_text_to_json",
+        label="Structured Sections to JSON",
+        description="Use for text already organized under CestaCV-style section headers.",
+        task="Convert structured section text into a single valid CestaCV JSON object.",
+        extra_rules=(
+            "Treat section headers as authoritative boundaries.",
+            "Do not move content across sections unless the heading is clearly wrong.",
+            "Convert repeated role blocks into distinct career_history objects.",
+        ),
+    ),
+    PromptPreset(
+        key="recruiter_safe_normalization",
+        label="Recruiter-Safe Normalization",
+        description="Use when extracted content needs conservative cleanup without invented facts.",
+        task="Normalize CV content into recruiter-safe CestaCV JSON while preserving source facts.",
+        extra_rules=(
+            "Prefer concise recruiter-facing values over long address or biographical fragments.",
+            "Clean labels out of values without changing the underlying facts.",
+            "Keep uncertain optional fields blank rather than guessing.",
+        ),
+    ),
 )
 
 

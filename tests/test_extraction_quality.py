@@ -1,4 +1,5 @@
 from io import BytesIO
+import json
 from pathlib import Path
 
 from app.pdf_compat import fitz
@@ -106,24 +107,41 @@ def test_weak_career_summary_is_rejected():
 def test_review_is_reset_after_template_change():
     app = create_app()
     client = TestClient(app)
-    doc = Document()
-    for line in [
-        "Jordan Lee Carter",
-        "Senior Software Engineer",
-        "Summary",
-        "Experienced software engineer delivering enterprise systems across regulated environments with strong implementation and delivery capability.",
-        "Skills",
-        "C#, .NET, Azure",
-        "Qualifications",
-        "BSc Computer Science | University of Zululand | 2007",
-        "Career History",
-        "Gijima Technologies | Senior Software Engineer | 2024 | Present",
-        "Delivered enterprise-grade platforms for public-sector clients.",
-    ]:
-        doc.add_paragraph(line)
-    buf = BytesIO()
-    doc.save(buf)
-    upload = client.post("/api/upload", files={"file": ("candidate.docx", buf.getvalue(), "application/vnd.openxmlformats-officedocument.wordprocessingml.document")})
+    structured = {
+        "cestacv_version": 1,
+        "identity": {
+            "full_name": "Jordan Lee Carter",
+            "headline": "Senior Software Engineer",
+            "availability": "",
+            "region": "South Africa",
+            "email": "",
+            "phone": "",
+            "location": "",
+            "linkedin": "",
+            "portfolio": "",
+        },
+        "career_summary": "Experienced software engineer delivering enterprise systems across regulated environments with strong implementation and delivery capability.",
+        "skills": [{"category": "Core Skills", "items": ["C#", ".NET", "Azure"]}],
+        "qualifications": [{"qualification": "BSc Computer Science", "institution": "University of Zululand", "year": "2007"}],
+        "certifications": [],
+        "training": [],
+        "achievements": [],
+        "languages": [],
+        "interests": [],
+        "references": [],
+        "projects": [],
+        "career_history": [
+            {
+                "job_title": "Senior Software Engineer",
+                "company": "Gijima Technologies",
+                "start_date": "2024",
+                "end_date": "Present",
+                "responsibilities": ["Delivered enterprise-grade platforms for public-sector clients."],
+            }
+        ],
+        "additional_sections": [],
+    }
+    upload = client.post("/api/upload-text", json={"text": json.dumps(structured)})
     payload = upload.json()
 
     review = client.post(f"/api/document/{payload['document_id']}/review-complete", json={"template_state": payload["template_state"]})

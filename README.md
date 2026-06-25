@@ -1,6 +1,6 @@
 # CestaCV Intelligence Studio
 
-CestaCV Intelligence Studio helps turn CV content into a clean professional profile and download it as a Word document.
+CestaCV Intelligence Studio turns CV content into a clean professional profile and downloads it as a Word document. The primary processing path now uses OpenRouter to structure raw CVs into the app's canonical profile JSON.
 
 ## Overview
 
@@ -23,8 +23,8 @@ The browser preview is the review surface. The Word document is the final output
 ## Basic Flow
 
 1. Upload or paste CV content.
-2. Review and edit the structured profile.
-3. Open the preview.
+2. OpenRouter structures the CV into the profile schema.
+3. Review and edit the generated profile.
 4. Download the DOCX profile.
 
 ## Run Locally
@@ -36,11 +36,24 @@ pip install -r requirements.txt
 
 The application starts at `http://127.0.0.1:8000`.
 
+Set OpenRouter credentials before processing raw CVs:
+
+```bash
+export OPENROUTER_API_KEY=your_key_here
+export OPENROUTER_MODEL=deepseek/deepseek-v4-flash:free
+```
+
+Structured JSON test payloads can be pasted without an API call, but normal CV uploads and pasted CV text require `OPENROUTER_API_KEY`.
+
 ## Hosted Start Command
 
 ```bash
 python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
+
+## Free Deployment
+
+The included `render.yaml` targets Render's free web service plan. It uses ephemeral `/tmp` storage, so uploaded files, generated exports, and the local SQLite session cache are temporary. Add `OPENROUTER_API_KEY` in the Render dashboard before deploying.
 
 ## Verification
 

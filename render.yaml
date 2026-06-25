@@ -14,7 +14,7 @@ services:
       - key: CV_INTELLIGENCE_LLM_MODE
         value: required
       - key: OPENROUTER_MODEL
-        value: deepseek/deepseek-v4-flash:free
+        value: deepseek/deepseek-chat-v3.1
       - key: OPENROUTER_APP_NAME
         value: CestaCV Intelligence Studio
       - key: OPENROUTER_API_KEY

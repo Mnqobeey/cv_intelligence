@@ -16,7 +16,7 @@ import httpx
 
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_MODEL = "deepseek/deepseek-v4-flash:free"
+DEFAULT_MODEL = "deepseek/deepseek-chat-v3.1"
 
 
 class OpenRouterNotConfiguredError(RuntimeError):

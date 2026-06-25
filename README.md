@@ -40,7 +40,7 @@ Set OpenRouter credentials before processing raw CVs:
 
 ```bash
 export OPENROUTER_API_KEY=your_key_here
-export OPENROUTER_MODEL=deepseek/deepseek-v4-flash:free
+export OPENROUTER_MODEL=deepseek/deepseek-chat-v3.1
 ```
 
 Structured JSON test payloads can be pasted without an API call, but normal CV uploads and pasted CV text require `OPENROUTER_API_KEY`.
